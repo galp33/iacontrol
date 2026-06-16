@@ -272,8 +272,8 @@ function verificarEmpleado(){
     errEl.style.display='block';
   });
 }
-function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('gv_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
-function guardarRegistrosLocales(){localStorage.setItem('gv_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
+function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('iac_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
+function guardarRegistrosLocales(){localStorage.setItem('iac_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
 function mostrarPanel(){
   document.getElementById('screen-cedula').style.display='none';
   document.getElementById('screen-panel').style.display='block';
@@ -309,7 +309,7 @@ function registrar(evt){
   var idx=FLUJO.indexOf(evt);var ultimo=FLUJO.filter(function(k){return registrosHoy[k];}).pop();var idxUlt=ultimo?FLUJO.indexOf(ultimo):-1;
   if(idx!==idxUlt+1){toast('Sigue el orden: Entrada - Almuerzo - Regreso - Salida');return;}
   if(evt==='E'){document.getElementById('aviso-epp').style.display='none';document.getElementById('modal-epp').classList.add('show');return;}
-  ejecutarRegistro(evt,false);
+  ejecutarRegistro(evt,false,false);
 }
 function responderEPP(tiene){
   if(!tiene){document.getElementById('aviso-epp').style.display='block';return;}
@@ -330,15 +330,16 @@ function responderNovedad(tieneNovedad){
     return;
   }
   document.getElementById('modal-novedad').classList.remove('show');
-  ejecutarRegistro('E',true);
+  ejecutarRegistro('E',true,true);
 }
-function ejecutarRegistro(evt,epp){
+function ejecutarRegistro(evt,epp,sinNovedad){
   spinner(true,'Verificando ubicacion...');
   verificarGPS(function(ok,dist){
     spinner(false);if(!ok)return;
     var hora=new Date().toLocaleTimeString('es-EC',{hour12:false});
     registrosHoy[evt]=hora;if(epp)registrosHoy['epp']=hora;
-    guardarRegistrosLocales();renderDia();enviarAlServidor(evt,hora,dist,epp);
+    guardarRegistrosLocales();renderDia();
+    enviarAlServidor(evt,hora,dist,epp,sinNovedad);
     toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
   });
 }
@@ -365,9 +366,9 @@ function calcularHoras(){
   if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs';rowExtra.style.display='flex';}
   else rowExtra.style.display='none';
 }
-function enviarAlServidor(evento,hora,distancia,epp){
+function enviarAlServidor(evento,hora,distancia,epp,sinNovedad){
   fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp})
+    body:JSON.stringify({accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp,sin_novedad:sinNovedad})
   }).catch(function(){});
 }
 </script>
