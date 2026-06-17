@@ -30,7 +30,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 .hdr-date{color:rgba(255,255,255,.5);font-size:.65rem;margin-top:2px;text-align:right}
 main{max-width:520px;margin:0 auto;padding:16px}
 .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
-#screen-cedula{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:24px}
+#screen-cedula{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:24px}
 .cedula-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);width:100%;max-width:380px;padding:32px 28px;text-align:center}
 .cedula-ico{font-size:3rem;margin-bottom:12px}
 .cedula-title{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
@@ -39,8 +39,13 @@ main{max-width:520px;margin:0 auto;padding:16px}
 .cedula-input:focus{outline:none;border-color:var(--navy)}
 .cedula-input::placeholder{letter-spacing:1px;font-weight:400;font-size:.9rem;color:#b0bbc8}
 .btn-ingresar{width:100%;margin-top:14px;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
-.btn-ingresar:hover{background:var(--navy2)}
 .cedula-error{margin-top:12px;padding:10px 14px;background:var(--red-l);border-radius:8px;font-size:.82rem;color:var(--red);font-weight:600;display:none}
+.licencia-vencida{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:24px;text-align:center}
+.lic-box{background:var(--card);border-radius:var(--radius);border:2px solid var(--red);box-shadow:var(--shadow);width:100%;max-width:380px;padding:32px 28px}
+.lic-ico{font-size:3rem;margin-bottom:12px}
+.lic-title{font-size:1.1rem;font-weight:700;color:var(--red);margin-bottom:8px}
+.lic-sub{font-size:.85rem;color:var(--muted);line-height:1.6}
+.lic-contacto{margin-top:16px;padding:14px;background:var(--blue-l);border-radius:10px;font-size:.85rem;color:var(--blue);font-weight:600}
 #gps-banner{display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;font-size:.82rem;font-weight:700;text-align:center}
 .gps-checking{background:#fff8e1;color:#f57f17;border:1px solid #ffe082}
 .gps-ok{background:var(--green-l);color:var(--green);border:1px solid #a5d6a7}
@@ -118,7 +123,7 @@ main{max-width:520px;margin:0 auto;padding:16px}
       <div class="hdr-logo">IA</div>
       <div>
         <div class="hdr-title">IACONTROL</div>
-        <div class="hdr-sub">Control de Personal</div>
+        <div class="hdr-sub" id="hdr-empresa">Control de Personal</div>
       </div>
     </div>
     <div>
@@ -127,6 +132,14 @@ main{max-width:520px;margin:0 auto;padding:16px}
     </div>
   </div>
 </header>
+<div class="licencia-vencida" id="screen-licencia">
+  <div class="lic-box">
+    <div class="lic-ico">&#x1F512;</div>
+    <div class="lic-title">Licencia vencida</div>
+    <div class="lic-sub">El servicio IACONTROL para tu empresa ha sido suspendido por falta de pago.</div>
+    <div class="lic-contacto">Contacta a tu administrador para renovar el acceso.</div>
+  </div>
+</div>
 <div id="screen-cedula">
   <div class="cedula-card">
     <div class="cedula-ico">&#x1FAA6;</div>
@@ -243,7 +256,9 @@ main{max-width:520px;margin:0 auto;padding:16px}
 <div id="toast"></div>
 <div id="jsonp-container" style="display:none"></div>
 <script>
-var SCRIPT_URL='https://script.google.com/macros/s/AKfycbyuaUDTTZ2JUEWJEx8sEF9GVs5ZS5dxypcUgdnGSP0yqgHQsZy1iLKWhlYCS8KPdNIZ1Q/exec';
+var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
+var clienteId='',scriptUrl='';
+(function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
 var FLUJO=['E','A','R','S'];
 var DIAS=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
 var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -252,28 +267,46 @@ setInterval(function(){var n=new Date();document.getElementById('clk').textConte
 function hoy(){return new Date().toISOString().split('T')[0];}
 function spinner(show,txt){document.getElementById('spinner').classList.toggle('show',show);if(txt)document.getElementById('spin-txt').textContent=txt;}
 function toast(msg,dur){dur=dur||3000;var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},dur);}
-function llamarScript(params,callback){
+function llamar(url,params,callback){
   var cbName='gvcb_'+Date.now();
   window[cbName]=function(data){delete window[cbName];document.getElementById('jsonp-container').innerHTML='';callback(data);};
   var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
-  var s=document.createElement('script');s.src=SCRIPT_URL+'?'+qs+'&callback='+cbName;
+  var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
   s.onerror=function(){delete window[cbName];document.getElementById('jsonp-container').innerHTML='';callback(null);};
   document.getElementById('jsonp-container').appendChild(s);
+}
+window.onload=function(){
+  if(!clienteId){mostrarError('URL invalida. Falta ?cliente=');return;}
+  spinner(true,'Verificando acceso...');
+  llamar(CENTRAL_URL,{accion:'getCliente',cliente:clienteId},function(data){
+    spinner(false);
+    if(!data||!data.ok){mostrarError('Cliente no encontrado.');return;}
+    if(!data.activo){document.getElementById('screen-licencia').style.display='flex';return;}
+    scriptUrl=data.scriptUrl;
+    document.getElementById('hdr-empresa').textContent=data.empresa||'Control de Personal';
+    document.getElementById('screen-cedula').style.display='flex';
+  });
+};
+function mostrarError(msg){
+  document.getElementById('screen-licencia').style.display='flex';
+  document.querySelector('.lic-title').textContent='Error';
+  document.querySelector('.lic-sub').textContent=msg;
 }
 function verificarEmpleado(){
   var ced=document.getElementById('inp-cedula').value.trim();
   var errEl=document.getElementById('cedula-error');errEl.style.display='none';
   if(ced.length<9){errEl.textContent='Ingresa tu numero de cedula.';errEl.style.display='block';return;}
   spinner(true,'Buscando empleado...');
-  llamarScript({cedula:ced},function(data){
+  llamar(scriptUrl,{cedula:ced},function(data){
     spinner(false);
     if(data&&data.ok){empleadoActual=data.empleado;cargarRegistrosLocales();mostrarPanel();return;}
+    if(data&&data.msg==='licencia_vencida'){document.getElementById('screen-cedula').style.display='none';document.getElementById('screen-licencia').style.display='flex';return;}
     errEl.textContent=data?'Cedula no registrada. Contacta a tu supervisor.':'Sin conexion. Intenta de nuevo.';
     errEl.style.display='block';
   });
 }
-function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('iac_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
-function guardarRegistrosLocales(){localStorage.setItem('iac_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
+function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
+function guardarRegistrosLocales(){localStorage.setItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
 function mostrarPanel(){
   document.getElementById('screen-cedula').style.display='none';
   document.getElementById('screen-panel').style.display='block';
@@ -367,7 +400,7 @@ function calcularHoras(){
   else rowExtra.style.display='none';
 }
 function enviarAlServidor(evento,hora,distancia,epp,sinNovedad){
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+  fetch(scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp,sin_novedad:sinNovedad})
   }).catch(function(){});
 }
