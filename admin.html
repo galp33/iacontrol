@@ -316,7 +316,7 @@ function llamar(url,params,callback){
   var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
   s.onerror=function(){delete window[cbName];callback(null);};
   document.body.appendChild(s);
-  setTimeout(function(){if(document.body.contains(s))document.body.removeChild(s);},10000);
+  setTimeout(function(){if(document.body.contains(s))document.body.removeChild(s);},30000);
 }
 function cargarTodo(){
   var hoy=new Date().toISOString().split('T')[0];
