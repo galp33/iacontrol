@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IACONTROL · TCIS Admin</title>
+<style>
+:root{
+  --navy:#1a3a5c;--navy2:#0f2238;--gold:#e8a020;
+  --green:#2e7d32;--green-l:#e8f5e9;
+  --red:#c62828;--red-l:#ffebee;
+  --orange:#e65100;--orange-l:#fff3e0;
+  --blue:#1565c0;--blue-l:#e3f2fd;
+  --bg:#f0f3f7;--card:#fff;--border:#dde3ea;
+  --txt:#1e2a38;--muted:#6b7a8d;
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-box{background:var(--card);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);padding:40px 36px;width:100%;max-width:360px;text-align:center}
+.login-logo{width:56px;height:56px;background:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:var(--gold);margin:0 auto 16px}
+.login-title{font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:4px}
+.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:28px}
+.login-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:1.1rem;text-align:center;letter-spacing:8px;font-weight:700;color:var(--navy);background:#f9fafb;margin-bottom:12px}
+.login-input:focus{outline:none;border-color:var(--navy)}
+.btn-login{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer}
+.login-error{margin-top:10px;padding:8px 12px;background:var(--red-l);border-radius:6px;font-size:.8rem;color:var(--red);font-weight:600;display:none}
+#admin-screen{display:none}
+header{background:var(--navy2);position:sticky;top:0;z-index:100}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:1400px;margin:0 auto}
+.hdr-brand{display:flex;align-items:center;gap:10px}
+.hdr-logo{width:32px;height:32px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:var(--navy2)}
+.hdr-title{color:#fff;font-size:.95rem;font-weight:700}
+.hdr-sub{color:rgba(255,255,255,.5);font-size:.68rem}
+.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:7px;padding:6px 14px;font-size:.78rem;cursor:pointer}
+.wrap{max-width:1400px;margin:0 auto;padding:24px}
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:10px;padding:5px;border:1px solid var(--border);width:fit-content;flex-wrap:wrap}
+.tab{padding:8px 20px;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent}
+.tab.active{background:var(--navy);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.card-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem}
+.tbl th{background:#f5f7fa;padding:10px 12px;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:1px solid #f0f3f7;vertical-align:middle}
+.tbl tr:hover td{background:#fafbfc}
+.tbl tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:.72rem;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-red{background:var(--red-l);color:var(--red)}
+.badge-orange{background:var(--orange-l);color:var(--orange)}
+.badge-blue{background:var(--blue-l);color:var(--blue)}
+.badge-num{background:#e8eaf6;color:#3949ab;font-size:.85rem;padding:4px 10px}
+.btn{padding:8px 16px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer;border:none}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-warning{background:var(--orange);color:#fff}
+.btn-sm{padding:5px 10px;font-size:.75rem}
+.btn-outline{background:#fff;border:2px solid var(--border);color:var(--txt)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.form-group input,.form-group select{padding:9px 12px;border:2px solid var(--border);border-radius:7px;font-size:.88rem;color:var(--txt);background:#f9fafb}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--navy);background:#fff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:20px}
+.stat-val{font-size:2rem;font-weight:800;color:var(--navy);line-height:1}
+.stat-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;font-weight:600}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:560px;overflow:hidden}
+.modal-hd{padding:18px 20px;background:var(--navy);color:#fff;font-weight:700;font-size:.95rem;display:flex;justify-content:space-between;align-items:center}
+.modal-bd{padding:24px}
+.modal-ft{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.btn-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:.9rem}
+.spinner-sm{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filters input,.filters select{padding:8px 12px;border:2px solid var(--border);border-radius:7px;font-size:.85rem;color:var(--txt);background:#fff}
+.export-box{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+.export-title{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:18px}
+.export-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.export-card{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:18px}
+.export-card-title{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.export-card p{font-size:.78rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.export-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.export-row input,.export-row select{padding:7px 10px;border:2px solid var(--border);border-radius:6px;font-size:.82rem;flex:1;min-width:100px;background:#fff}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">IA</div>
+    <div class="login-title">IACONTROL</div>
+    <div class="login-sub">TCIS Ecuador · Panel Admin</div>
+    <input class="login-input" id="inp-pass" type="password" maxlength="10" placeholder="••••" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">Ingresar</button>
+    <div class="login-error" id="login-error">Contrasena incorrecta</div>
+  </div>
+</div>
+<div id="admin-screen">
+  <header>
+    <div class="hdr">
+      <div class="hdr-brand">
+        <div class="hdr-logo">IA</div>
+        <div>
+          <div class="hdr-title">IACONTROL · TCIS Ecuador</div>
+          <div class="hdr-sub">Panel de Control</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesion</button>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('registros',this)">Registros</button>
+      <button class="tab" onclick="showTab('produccion',this)">Produccion</button>
+      <button class="tab" onclick="showTab('exportar',this)">Exportar</button>
+      <button class="tab" onclick="showTab('empleados',this)">Empleados</button>
+      <button class="tab" onclick="showTab('obras',this)">Obras</button>
+    </div>
+    <div class="tab-content active" id="tab-registros">
+      <div class="stats">
+        <div class="stat-card"><div class="stat-val" id="st-total">-</div><div class="stat-lbl">Registros hoy</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-entradas">-</div><div class="stat-lbl">Entradas hoy</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-epp">-</div><div class="stat-lbl">EPP confirmado</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-nov">-</div><div class="stat-lbl">Sin novedades</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-cont">-</div><div class="stat-lbl">Contenedores hoy</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-cert">-</div><div class="stat-lbl">Certificados hoy</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Registros de asistencia y produccion</div>
+          <button class="btn btn-primary btn-sm" onclick="cargarRegistros()">Actualizar</button>
+        </div>
+        <div style="padding:12px 20px">
+          <div class="filters">
+            <input type="date" id="flt-fecha" onchange="cargarRegistros()">
+            <select id="flt-obra" onchange="cargarRegistros()"><option value="">Todas las obras</option></select>
+            <input type="text" id="flt-nombre" placeholder="Buscar nombre..." oninput="filtrarTabla()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th><th>Contenedores</th><th>Certificados</th></tr></thead>
+            <tbody id="tbl-registros"><tr><td colspan="11" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-produccion">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Resumen de produccion por empleado</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="date" id="prod-fecha" onchange="cargarProduccion()">
+            <button class="btn btn-primary btn-sm" onclick="cargarProduccion()">Ver</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Entrada</th><th>Salida</th><th>Horas</th><th>Contenedores</th><th>Certificados</th></tr></thead>
+            <tbody id="tbl-produccion"><tr><td colspan="8" class="loading">Selecciona una fecha</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-exportar">
+      <div class="export-box">
+        <div class="export-title">Exportar datos a Excel (CSV)</div>
+        <div class="export-grid">
+          <div class="export-card">
+            <div class="export-card-title">Registros del mes</div>
+            <p>Todos los registros incluyendo contenedores y certificados.</p>
+            <div class="export-row">
+              <select id="exp-mes">
+                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+              </select>
+              <input type="number" id="exp-anio" value="2026" min="2024" max="2030" style="width:90px;flex:none">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="exportarMes()">Descargar Excel</button>
+          </div>
+          <div class="export-card">
+            <div class="export-card-title">Rango de fechas</div>
+            <p>Registros entre dos fechas especificas.</p>
+            <div class="export-row">
+              <input type="date" id="exp-desde">
+              <input type="date" id="exp-hasta">
+            </div>
+            <button class="btn btn-warning btn-sm" onclick="exportarRango()">Descargar Excel</button>
+          </div>
+          <div class="export-card">
+            <div class="export-card-title">Produccion mensual por empleado</div>
+            <p>Total de contenedores y certificados por empleado en el mes.</p>
+            <div class="export-row">
+              <select id="exp-mes-prod">
+                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+              </select>
+              <input type="number" id="exp-anio-prod" value="2026" min="2024" max="2030" style="width:90px;flex:none">
+            </div>
+            <button class="btn btn-success btn-sm" onclick="exportarProduccion()">Descargar Excel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-empleados">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Empleados registrados</div>
+          <button class="btn btn-success btn-sm" onclick="abrirModalEmpleado()">+ Nuevo empleado</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Cedula</th><th>Nombre</th><th>Cargo</th><th>Obra</th><th>Turno</th><th>Jornada</th><th>Acciones</th></tr></thead>
+            <tbody id="tbl-empleados"><tr><td colspan="7" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-obras">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Obras configuradas</div>
+          <button class="btn btn-success btn-sm" onclick="abrirModalObra()">+ Nueva obra</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Nombre</th><th>Direccion</th><th>Coordenadas</th><th>Radio</th><th>RRHH</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tbl-obras"><tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-empleado">
+  <div class="modal-box">
+    <div class="modal-hd"><span>Nuevo empleado</span><button class="btn-close" onclick="cerrarModal('modal-empleado')">x</button></div>
+    <div class="modal-bd">
+      <div class="form-grid">
+        <div class="form-group"><label>Cedula *</label><input id="emp-cedula" type="tel" maxlength="10" placeholder="0000000000"></div>
+        <div class="form-group"><label>Nombre *</label><input id="emp-nombre" type="text"></div>
+        <div class="form-group"><label>Cargo</label><input id="emp-cargo" type="text" placeholder="Inspector"></div>
+        <div class="form-group"><label>Obra *</label><select id="emp-obra"></select></div>
+        <div class="form-group"><label>Turno inicio</label><input id="emp-turno-ini" type="text" placeholder="06:00"></div>
+        <div class="form-group"><label>Turno fin</label><input id="emp-turno-fin" type="text" placeholder="18:00"></div>
+        <div class="form-group"><label>Jornada (hrs)</label><input id="emp-jornada" type="number" value="12" min="1" max="24"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-empleado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEmpleado()">Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-obra">
+  <div class="modal-box">
+    <div class="modal-hd"><span>Nueva obra</span><button class="btn-close" onclick="cerrarModal('modal-obra')">x</button></div>
+    <div class="modal-bd">
+      <div class="form-grid">
+        <div class="form-group"><label>Nombre *</label><input id="obra-nombre" type="text"></div>
+        <div class="form-group"><label>Direccion</label><input id="obra-dir" type="text"></div>
+        <div class="form-group"><label>Latitud *</label><input id="obra-lat" type="text" placeholder="-2.1894"></div>
+        <div class="form-group"><label>Longitud *</label><input id="obra-lng" type="text" placeholder="-79.8890"></div>
+        <div class="form-group"><label>Radio (m)</label><input id="obra-radio" type="number" value="200"></div>
+        <div class="form-group"><label>Estado</label><select id="obra-activa"><option value="SI">Activa</option><option value="NO">Inactiva</option></select></div>
+        <div class="form-group"><label>Nombre RRHH</label><input id="obra-rrhh-nom" type="text"></div>
+        <div class="form-group"><label>Telefono RRHH</label><input id="obra-rrhh-tel" type="tel"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="cerrarModal('modal-obra')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarObra()">Guardar</button>
+    </div>
+  </div>
+</div>
+<script>
+var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
+var PASS_ADMIN='2026',scriptUrl='';
+var datosRegistros=[],datosEmpleados=[],datosObras=[];
+window.onload=function(){
+  var mes=(new Date().getMonth()+1).toString().padStart(2,'0');
+  document.getElementById('exp-mes').value=mes;
+  document.getElementById('exp-mes-prod').value=mes;
+  document.getElementById('prod-fecha').value=new Date().toISOString().split('T')[0];
+  var hoy=new Date().toISOString().split('T')[0];
+  document.getElementById('exp-desde').value=hoy;
+  document.getElementById('exp-hasta').value=hoy;
+  llamar(CENTRAL_URL,{accion:'getCliente',cliente:'tcis'},function(data){
+    if(data&&data.ok){scriptUrl=data.scriptUrl;PASS_ADMIN=String(data.passAdmin)||'2026';}
+  });
+};
+function login(){
+  var p=document.getElementById('inp-pass').value;
+  if(p===PASS_ADMIN){document.getElementById('login-screen').style.display='none';document.getElementById('admin-screen').style.display='block';cargarTodo();}
+  else document.getElementById('login-error').style.display='block';
+}
+function logout(){document.getElementById('admin-screen').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('inp-pass').value='';}
+function showTab(name,el){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');document.getElementById('tab-'+name).classList.add('active');
+  if(name==='registros')cargarRegistros();
+  if(name==='produccion')cargarProduccion();
+  if(name==='empleados')cargarEmpleados();
+  if(name==='obras')cargarObras();
+}
+function llamar(url,params,callback){
+  var cbName='adm_'+Date.now();
+  window[cbName]=function(data){delete window[cbName];callback(data);};
+  var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
+  var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
+  s.onerror=function(){delete window[cbName];callback(null);};
+  document.body.appendChild(s);
+  setTimeout(function(){if(document.body.contains(s))document.body.removeChild(s);},30000);
+}
+function cargarTodo(){
+  var hoy=new Date().toISOString().split('T')[0];
+  document.getElementById('flt-fecha').value=hoy;
+  cargarRegistros();cargarObrasBg();
+}
+function cargarRegistros(){
+  var fecha=document.getElementById('flt-fecha').value;
+  var obra=document.getElementById('flt-obra').value;
+  document.getElementById('tbl-registros').innerHTML='<tr><td colspan="11" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  llamar(scriptUrl,{accion:'getRegistros',fecha:fecha,obra:obra},function(data){
+    if(!data||!data.ok){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="11" class="loading">Error al cargar</td></tr>';return;}
+    datosRegistros=data.registros||[];renderRegistros(datosRegistros);actualizarStats(datosRegistros);
+  });
+}
+function renderRegistros(rows){
+  if(!rows.length){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="11" class="loading">Sin registros</td></tr>';return;}
+  var html='';
+  rows.forEach(function(r){
+    var evt=r[4]||'';
+    var evtB=evt==='Entrada'?'<span class="badge badge-green">'+evt+'</span>':evt==='Almuerzo'?'<span class="badge badge-orange">'+evt+'</span>':evt==='Regreso'?'<span class="badge badge-blue">'+evt+'</span>':'<span class="badge badge-red">'+evt+'</span>';
+    var epp=r[7]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
+    var nov=r[8]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
+    var cont=r[9]&&r[9]!=='-'?'<span class="badge badge-num">'+r[9]+'</span>':'-';
+    var cert=r[10]&&r[10]!=='-'?'<span class="badge badge-num">'+r[10]+'</span>':'-';
+    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td><td>'+cont+'</td><td>'+cert+'</td></tr>';
+  });
+  document.getElementById('tbl-registros').innerHTML=html;
+}
+function actualizarStats(rows){
+  var entradas=rows.filter(function(r){return r[4]==='Entrada';});
+  var salidas=rows.filter(function(r){return r[4]==='Salida';});
+  var epp=entradas.filter(function(r){return r[7]==='SI';});
+  var nov=entradas.filter(function(r){return r[8]==='SI';});
+  var totalCont=salidas.reduce(function(s,r){return s+(parseInt(r[9])||0);},0);
+  var totalCert=salidas.reduce(function(s,r){return s+(parseInt(r[10])||0);},0);
+  document.getElementById('st-total').textContent=rows.length;
+  document.getElementById('st-entradas').textContent=entradas.length;
+  document.getElementById('st-epp').textContent=epp.length+'/'+entradas.length;
+  document.getElementById('st-nov').textContent=nov.length+'/'+entradas.length;
+  document.getElementById('st-cont').textContent=totalCont;
+  document.getElementById('st-cert').textContent=totalCert;
+}
+function filtrarTabla(){
+  var txt=document.getElementById('flt-nombre').value.toLowerCase();
+  var filtrado=datosRegistros.filter(function(r){return !txt||String(r[2]).toLowerCase().includes(txt);});
+  renderRegistros(filtrado);
+}
+function cargarProduccion(){
+  var fecha=document.getElementById('prod-fecha').value;
+  document.getElementById('tbl-produccion').innerHTML='<tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  llamar(scriptUrl,{accion:'getRegistros',fecha:fecha,obra:''},function(data){
+    if(!data||!data.ok){document.getElementById('tbl-produccion').innerHTML='<tr><td colspan="8" class="loading">Error</td></tr>';return;}
+    var rows=data.registros||[];
+    var empleados={};
+    rows.forEach(function(r){
+      var key=r[1];
+      if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],entrada:'',salida:'',cont:0,cert:0};
+      if(r[4]==='Entrada')empleados[key].entrada=r[5];
+      if(r[4]==='Salida'){empleados[key].salida=r[5];empleados[key].cont=parseInt(r[9])||0;empleados[key].cert=parseInt(r[10])||0;}
+    });
+    function toMins(t){if(!t)return 0;var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+    var html='';
+    Object.keys(empleados).forEach(function(k){
+      var e=empleados[k];
+      var mins=e.entrada&&e.salida?toMins(e.salida)-toMins(e.entrada):0;
+      var horas=mins>0?Math.round(mins/60*10)/10+' hrs':'-';
+      html+='<tr><td>'+e.cedula+'</td><td><strong>'+e.nombre+'</strong></td><td>'+e.obra+'</td><td>'+e.entrada+'</td><td>'+e.salida+'</td><td>'+horas+'</td><td><span class="badge badge-num">'+e.cont+'</span></td><td><span class="badge badge-num">'+e.cert+'</span></td></tr>';
+    });
+    if(!html)html='<tr><td colspan="8" class="loading">Sin registros para esta fecha</td></tr>';
+    document.getElementById('tbl-produccion').innerHTML=html;
+  });
+}
+function cargarEmpleados(){
+  document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  llamar(scriptUrl,{accion:'getEmpleados'},function(data){
+    if(!data||!data.ok){document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading">Error</td></tr>';return;}
+    datosEmpleados=data.empleados||[];renderEmpleados(datosEmpleados);
+  });
+}
+function renderEmpleados(rows){
+  if(!rows.length){document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading">Sin empleados</td></tr>';return;}
+  var html='';
+  rows.forEach(function(r,i){
+    html+='<tr><td>'+r[0]+'</td><td><strong>'+r[1]+'</strong></td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'-'+r[5]+'</td><td>'+r[6]+' hrs</td>';
+    html+='<td><button class="btn btn-danger btn-sm" onclick="eliminarEmpleado('+i+')">Eliminar</button></td></tr>';
+  });
+  document.getElementById('tbl-empleados').innerHTML=html;
+}
+function cargarObras(){
+  document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  llamar(scriptUrl,{accion:'getObras'},function(data){
+    if(!data||!data.ok){document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading">Error</td></tr>';return;}
+    datosObras=data.obras||[];renderObras(datosObras);actualizarSelectObras(datosObras);
+  });
+}
+function cargarObrasBg(){
+  llamar(scriptUrl,{accion:'getObras'},function(data){
+    if(data&&data.ok){datosObras=data.obras||[];actualizarSelectObras(datosObras);}
+  });
+}
+function renderObras(rows){
+  if(!rows.length){document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading">Sin obras</td></tr>';return;}
+  var html='';
+  rows.forEach(function(r,i){
+    var activa=(r[5]==='SI')?'<span class="badge badge-green">Activa</span>':'<span class="badge badge-red">Inactiva</span>';
+    html+='<tr><td><strong>'+r[0]+'</strong></td><td>'+r[1]+'</td><td style="font-size:.78rem">'+r[2]+', '+r[3]+'</td><td>'+r[4]+' m</td><td>'+(r[6]||'-')+'</td><td>'+(r[7]||'-')+'</td><td>'+activa+'</td>';
+    html+='<td><button class="btn btn-danger btn-sm" onclick="eliminarObra('+i+')">Eliminar</button></td></tr>';
+  });
+  document.getElementById('tbl-obras').innerHTML=html;
+}
+function actualizarSelectObras(rows){
+  var sel=document.getElementById('flt-obra');var selEmp=document.getElementById('emp-obra');var val=sel.value;
+  sel.innerHTML='<option value="">Todas las obras</option>';if(selEmp)selEmp.innerHTML='';
+  rows.forEach(function(r){sel.innerHTML+='<option value="'+r[0]+'">'+r[0]+'</option>';if(selEmp)selEmp.innerHTML+='<option value="'+r[0]+'">'+r[0]+'</option>';});
+  sel.value=val;
+}
+function toCSV(headers,rows){var lines=[headers.join(',')];rows.forEach(function(r){lines.push(r.map(function(c){return '"'+(c||'').toString().replace(/"/g,'""')+'"';}).join(','));});return lines.join('\n');}
+function descargarCSV(csv,nombre){var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=nombre;a.click();URL.revokeObjectURL(url);}
+function obtenerTodosRegistros(callback){
+  llamar(scriptUrl,{accion:'getRegistros',fecha:'',obra:''},function(data){if(!data||!data.ok){alert('Error al obtener datos');return;}callback(data.registros||[]);});
+}
+function exportarMes(){
+  var mes=document.getElementById('exp-mes').value;var anio=document.getElementById('exp-anio').value;var prefix=anio+'-'+mes;
+  obtenerTodosRegistros(function(rows){
+    var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
+    if(!filtrado.length){alert('Sin registros para ese mes');return;}
+    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad','Contenedores','Certificados'],filtrado),'TCIS_Registros_'+prefix+'.csv');
+  });
+}
+function exportarRango(){
+  var desde=document.getElementById('exp-desde').value;var hasta=document.getElementById('exp-hasta').value;
+  if(!desde||!hasta){alert('Selecciona las dos fechas');return;}
+  obtenerTodosRegistros(function(rows){
+    var filtrado=rows.filter(function(r){return r[0]>=desde&&r[0]<=hasta;});
+    if(!filtrado.length){alert('Sin registros en ese rango');return;}
+    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad','Contenedores','Certificados'],filtrado),'TCIS_Rango_'+desde+'_'+hasta+'.csv');
+  });
+}
+function exportarProduccion(){
+  var mes=document.getElementById('exp-mes-prod').value;var anio=document.getElementById('exp-anio-prod').value;var prefix=anio+'-'+mes;
+  obtenerTodosRegistros(function(rows){
+    var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
+    if(!filtrado.length){alert('Sin registros para ese mes');return;}
+    var empleados={};
+    filtrado.forEach(function(r){
+      var key=r[1];if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],dias:0,cont:0,cert:0};
+      if(r[4]==='Salida'){empleados[key].cont+=parseInt(r[9])||0;empleados[key].cert+=parseInt(r[10])||0;empleados[key].dias++;}
+    });
+    var resumen=[];Object.keys(empleados).forEach(function(k){var e=empleados[k];resumen.push([e.cedula,e.nombre,e.obra,e.dias,e.cont,e.cert]);});
+    descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Total Contenedores','Total Certificados'],resumen),'TCIS_Produccion_'+prefix+'.csv');
+  });
+}
+function abrirModalEmpleado(){
+  actualizarSelectObras(datosObras);
+  ['emp-cedula','emp-nombre','emp-cargo','emp-turno-ini','emp-turno-fin'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('emp-jornada').value=12;document.getElementById('modal-empleado').classList.add('show');
+}
+function abrirModalObra(){
+  ['obra-nombre','obra-dir','obra-lat','obra-lng','obra-rrhh-nom','obra-rrhh-tel'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('obra-radio').value=200;document.getElementById('obra-activa').value='SI';document.getElementById('modal-obra').classList.add('show');
+}
+function cerrarModal(id){document.getElementById(id).classList.remove('show');}
+function guardarEmpleado(){
+  var cedula=document.getElementById('emp-cedula').value.trim();var nombre=document.getElementById('emp-nombre').value.trim();
+  var cargo=document.getElementById('emp-cargo').value.trim();var obra=document.getElementById('emp-obra').value;
+  var ini=document.getElementById('emp-turno-ini').value.trim();var fin=document.getElementById('emp-turno-fin').value.trim();var jornada=document.getElementById('emp-jornada').value;
+  if(!cedula||!nombre||!obra){alert('Completa: Cedula, Nombre y Obra.');return;}
+  llamar(scriptUrl,{accion:'addEmpleado',cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
+    if(data&&data.ok){cerrarModal('modal-empleado');cargarEmpleados();alert('Empleado guardado.');}else alert('Error al guardar.');
+  });
+}
+function guardarObra(){
+  var nombre=document.getElementById('obra-nombre').value.trim();var dir=document.getElementById('obra-dir').value.trim();
+  var lat=document.getElementById('obra-lat').value.trim();var lng=document.getElementById('obra-lng').value.trim();
+  var radio=document.getElementById('obra-radio').value;var activa=document.getElementById('obra-activa').value;
+  var rrhhNom=document.getElementById('obra-rrhh-nom').value.trim();var rrhhTel=document.getElementById('obra-rrhh-tel').value.trim();
+  if(!nombre||!lat||!lng){alert('Completa: Nombre, Latitud y Longitud.');return;}
+  llamar(scriptUrl,{accion:'addObra',nombre:nombre,dir:dir,lat:lat,lng:lng,radio:radio,activa:activa,rrhhNombre:rrhhNom,rrhhTel:rrhhTel},function(data){
+    if(data&&data.ok){cerrarModal('modal-obra');cargarObras();alert('Obra guardada.');}else alert('Error al guardar.');
+  });
+}
+function eliminarEmpleado(idx){
+  if(!confirm('Eliminar este empleado?'))return;
+  llamar(scriptUrl,{accion:'delEmpleado',cedula:datosEmpleados[idx][0]},function(data){if(data&&data.ok)cargarEmpleados();else alert('Error.');});
+}
+function eliminarObra(idx){
+  if(!confirm('Eliminar esta obra?'))return;
+  llamar(scriptUrl,{accion:'delObra',nombre:datosObras[idx][0]},function(data){if(data&&data.ok)cargarObras();else alert('Error.');});
+}
+</script>
+</body>
+</html>
