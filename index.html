@@ -91,9 +91,10 @@ main{max-width:520px;margin:0 auto;padding:16px}
 .mh-navy{background:var(--navy)}
 .mh-red{background:var(--red)}
 .mh-orange{background:var(--orange)}
-.modal-body{padding:28px 24px}
+.mh-blue{background:var(--blue)}
+.modal-body{padding:24px}
 .modal-ico{font-size:3rem;margin-bottom:14px}
-.modal-txt{font-size:.92rem;color:var(--txt);line-height:1.6;margin-bottom:24px}
+.modal-txt{font-size:.92rem;color:var(--txt);line-height:1.6;margin-bottom:20px}
 .modal-txt strong{color:var(--navy)}
 .modal-btns{display:flex;flex-direction:column;gap:10px}
 .btn-si{padding:14px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer}
@@ -106,6 +107,11 @@ main{max-width:520px;margin:0 auto;padding:16px}
 .rrhh-nom{font-size:.95rem;font-weight:700;color:var(--navy)}
 .rrhh-tel{font-size:.85rem;color:var(--muted);margin-top:2px}
 .btn-llamar{display:block;margin-top:10px;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.prod-form{text-align:left;margin-top:4px}
+.prod-label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:block}
+.prod-input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:1.1rem;font-weight:700;color:var(--navy);background:#f9fafb;text-align:center;margin-bottom:14px}
+.prod-input:focus{outline:none;border-color:var(--navy);background:#fff}
+.hora-extra-badge{display:inline-block;padding:6px 12px;background:var(--orange-l);color:var(--orange);border-radius:20px;font-size:.78rem;font-weight:700;margin-top:8px}
 #spinner{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:400;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #spinner.show{display:flex}
 .spin-ring{width:44px;height:44px;border:4px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite}
@@ -197,8 +203,10 @@ main{max-width:520px;margin:0 auto;padding:16px}
         <div class="res-row"><span class="res-lbl">Almuerzo</span><span class="res-val" id="rv-A">-</span></div>
         <div class="res-row"><span class="res-lbl">Regreso</span><span class="res-val" id="rv-R">-</span></div>
         <div class="res-row"><span class="res-lbl">Salida</span><span class="res-val" id="rv-S">-</span></div>
+        <div class="res-row" id="row-cont" style="display:none"><span class="res-lbl">Contenedores</span><span class="res-val" id="rv-cont">-</span></div>
+        <div class="res-row" id="row-cert" style="display:none"><span class="res-lbl">Certificados</span><span class="res-val" id="rv-cert">-</span></div>
         <div class="res-total"><span style="color:var(--muted)">Horas trabajadas</span><span class="res-val" id="rv-horas">-</span></div>
-        <div class="res-total" id="row-extra" style="display:none"><span style="color:var(--muted)">Horas extra</span><span class="res-extra" id="rv-extra">-</span></div>
+        <div class="res-total" id="row-extra" style="display:none"><span style="color:var(--orange)">Horas extra</span><span class="res-extra" id="rv-extra">-</span></div>
       </div>
     </div>
   </main>
@@ -239,6 +247,27 @@ main{max-width:520px;margin:0 auto;padding:16px}
     </div>
   </div>
 </div>
+<div class="modal" id="modal-produccion">
+  <div class="modal-box">
+    <div class="modal-head mh-blue">Reporte de Produccion</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x1F4E6;</div>
+      <div class="modal-txt">Antes de registrar tu salida, indica la produccion del dia.</div>
+      <div class="prod-form">
+        <label class="prod-label">Contenedores atendidos</label>
+        <input class="prod-input" id="inp-contenedores" type="number" min="0" placeholder="0" inputmode="numeric">
+        <label class="prod-label">Certificados emitidos</label>
+        <input class="prod-input" id="inp-certificados" type="number" min="0" placeholder="0" inputmode="numeric">
+      </div>
+      <div id="hora-extra-msg" style="display:none;text-align:center">
+        <span class="hora-extra-badge">Turno fuera de horario normal (06:00 - 18:00)</span>
+      </div>
+      <div class="modal-btns" style="margin-top:16px">
+        <button class="btn-si" onclick="confirmarProduccion()">Confirmar y registrar salida</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal" id="modal-gps">
   <div class="modal-box">
     <div class="modal-head mh-red">Fuera del area asignada</div>
@@ -258,6 +287,8 @@ main{max-width:520px;margin:0 auto;padding:16px}
 <script>
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
 var clienteId='',scriptUrl='';
+var TURNO_INICIO=6,TURNO_FIN=18;
+var TIENE_PRODUCCION=false;
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
 var FLUJO=['E','A','R','S'];
 var DIAS=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
@@ -284,6 +315,7 @@ window.onload=function(){
     if(!data.activo){document.getElementById('screen-licencia').style.display='flex';return;}
     scriptUrl=data.scriptUrl;
     document.getElementById('hdr-empresa').textContent=data.empresa||'Control de Personal';
+    TIENE_PRODUCCION=!!(data.produccion||(clienteId==='tcis'));
     document.getElementById('screen-cedula').style.display='flex';
   });
 };
@@ -305,13 +337,20 @@ function verificarEmpleado(){
     errEl.style.display='block';
   });
 }
-function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
-function guardarRegistrosLocales(){localStorage.setItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
+function localKey(){
+  var prefix=clienteId==='tcis'?'tcis':'iac_'+clienteId;
+  return prefix+'_'+empleadoActual.cedula+'_'+hoy();
+}
+function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem(localKey())||'{}');}catch(e){registrosHoy={};}}
+function guardarRegistrosLocales(){localStorage.setItem(localKey(),JSON.stringify(registrosHoy));}
 function mostrarPanel(){
   document.getElementById('screen-cedula').style.display='none';
   document.getElementById('screen-panel').style.display='block';
   document.getElementById('p-nombre').textContent=empleadoActual.nombre;
-  document.getElementById('p-meta').textContent=empleadoActual.cargo+' - '+empleadoActual.obra+' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
+  var meta=empleadoActual.cargo+' - '+empleadoActual.obra;
+  if(empleadoActual.turnoInicio&&empleadoActual.turnoFin)meta+=' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
+  document.getElementById('p-meta').textContent=meta;
+  if(TIENE_PRODUCCION){document.getElementById('row-cont').style.display='flex';document.getElementById('row-cert').style.display='flex';}
   renderDia();verificarGPS();
 }
 function cerrarSesion(){
@@ -338,11 +377,19 @@ function verificarGPS(callback){
   );
 }
 function calcDist(lat1,lon1,lat2,lon2){var R=6371000,dL=(lat2-lat1)*Math.PI/180,dO=(lon2-lon1)*Math.PI/180;var a=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dO/2)*Math.sin(dO/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function esHoraExtra(){var h=new Date().getHours();return h<TURNO_INICIO||h>=TURNO_FIN;}
 function registrar(evt){
   var idx=FLUJO.indexOf(evt);var ultimo=FLUJO.filter(function(k){return registrosHoy[k];}).pop();var idxUlt=ultimo?FLUJO.indexOf(ultimo):-1;
   if(idx!==idxUlt+1){toast('Sigue el orden: Entrada - Almuerzo - Regreso - Salida');return;}
   if(evt==='E'){document.getElementById('aviso-epp').style.display='none';document.getElementById('modal-epp').classList.add('show');return;}
-  ejecutarRegistro(evt,false,false);
+  if(evt==='S'&&TIENE_PRODUCCION){
+    document.getElementById('inp-contenedores').value='';
+    document.getElementById('inp-certificados').value='';
+    document.getElementById('hora-extra-msg').style.display=esHoraExtra()?'block':'none';
+    document.getElementById('modal-produccion').classList.add('show');
+    return;
+  }
+  ejecutarRegistro(evt,false,false,0,0);
 }
 function responderEPP(tiene){
   if(!tiene){document.getElementById('aviso-epp').style.display='block';return;}
@@ -363,16 +410,23 @@ function responderNovedad(tieneNovedad){
     return;
   }
   document.getElementById('modal-novedad').classList.remove('show');
-  ejecutarRegistro('E',true,true);
+  ejecutarRegistro('E',true,true,0,0);
 }
-function ejecutarRegistro(evt,epp,sinNovedad){
+function confirmarProduccion(){
+  var cont=parseInt(document.getElementById('inp-contenedores').value)||0;
+  var cert=parseInt(document.getElementById('inp-certificados').value)||0;
+  document.getElementById('modal-produccion').classList.remove('show');
+  ejecutarRegistro('S',false,false,cont,cert);
+}
+function ejecutarRegistro(evt,epp,sinNovedad,contenedores,certificados){
   spinner(true,'Verificando ubicacion...');
   verificarGPS(function(ok,dist){
     spinner(false);if(!ok)return;
     var hora=new Date().toLocaleTimeString('es-EC',{hour12:false});
     registrosHoy[evt]=hora;if(epp)registrosHoy['epp']=hora;
+    if(evt==='S'&&TIENE_PRODUCCION){registrosHoy['contenedores']=contenedores;registrosHoy['certificados']=certificados;}
     guardarRegistrosLocales();renderDia();
-    enviarAlServidor(evt,hora,dist,epp,sinNovedad);
+    enviarAlServidor(evt,hora,dist,epp,sinNovedad,contenedores,certificados);
     toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
   });
 }
@@ -386,6 +440,10 @@ function renderDia(){
     hrEl.textContent=registrosHoy[k]||'';ps.className='prog-seg'+(done?' done':next?' cur':'');
     var rv=document.getElementById('rv-'+k);if(rv)rv.textContent=registrosHoy[k]||'-';
   });
+  if(TIENE_PRODUCCION){
+    if(registrosHoy['contenedores']!==undefined)document.getElementById('rv-cont').textContent=registrosHoy['contenedores'];
+    if(registrosHoy['certificados']!==undefined)document.getElementById('rv-cert').textContent=registrosHoy['certificados'];
+  }
   if(Object.keys(registrosHoy).length>0){document.getElementById('card-resumen').style.display='block';calcularHoras();}
 }
 function calcularHoras(){
@@ -393,16 +451,18 @@ function calcularHoras(){
   if(!E||!S)return;
   function toMins(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
   var mins=toMins(S)-toMins(E);if(A&&R)mins-=(toMins(R)-toMins(A));
-  var hTrab=Math.round(mins/60*10)/10;var hExtra=Math.max(0,Math.round((mins-empleadoActual.jornadaHrs*60)/60*10)/10);
+  var hTrab=Math.round(mins/60*10)/10;
+  var jornadaMins=TIENE_PRODUCCION?(TURNO_FIN-TURNO_INICIO)*60:(empleadoActual.jornadaHrs||8)*60;
+  var hExtra=Math.max(0,Math.round((mins-jornadaMins)/60*10)/10);
   document.getElementById('rv-horas').textContent=hTrab+' hrs';
   var rowExtra=document.getElementById('row-extra');
-  if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs';rowExtra.style.display='flex';}
+  if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs extra';rowExtra.style.display='flex';}
   else rowExtra.style.display='none';
 }
-function enviarAlServidor(evento,hora,distancia,epp,sinNovedad){
-  fetch(scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp,sin_novedad:sinNovedad})
-  }).catch(function(){});
+function enviarAlServidor(evento,hora,distancia,epp,sinNovedad,contenedores,certificados){
+  var payload={accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp,sin_novedad:sinNovedad};
+  if(TIENE_PRODUCCION){payload.contenedores=contenedores||0;payload.certificados=certificados||0;}
+  fetch(scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
 }
 </script>
 </body>

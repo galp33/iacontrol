@@ -28,13 +28,13 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
 .login-error{margin-top:10px;padding:8px 12px;background:var(--red-l);border-radius:6px;font-size:.8rem;color:var(--red);font-weight:600;display:none}
 #admin-screen{display:none}
 header{background:var(--navy2);position:sticky;top:0;z-index:100}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:1200px;margin:0 auto}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:1400px;margin:0 auto}
 .hdr-brand{display:flex;align-items:center;gap:10px}
 .hdr-logo{width:32px;height:32px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:var(--navy2)}
 .hdr-title{color:#fff;font-size:.95rem;font-weight:700}
 .hdr-sub{color:rgba(255,255,255,.5);font-size:.68rem}
 .btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:7px;padding:6px 14px;font-size:.78rem;cursor:pointer}
-.wrap{max-width:1200px;margin:0 auto;padding:24px}
+.wrap{max-width:1400px;margin:0 auto;padding:24px}
 .tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:10px;padding:5px;border:1px solid var(--border);width:fit-content;flex-wrap:wrap}
 .tab{padding:8px 20px;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent}
 .tab.active{background:var(--navy);color:#fff}
@@ -43,7 +43,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
 .card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .card-title{font-size:.95rem;font-weight:700;color:var(--navy)}
-.tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem}
 .tbl th{background:#f5f7fa;padding:10px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border)}
 .tbl td{padding:10px 12px;border-bottom:1px solid #f0f3f7;vertical-align:middle}
 .tbl tr:hover td{background:#fafbfc}
@@ -53,6 +53,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 .badge-red{background:var(--red-l);color:var(--red)}
 .badge-orange{background:var(--orange-l);color:var(--orange)}
 .badge-blue{background:var(--blue-l);color:var(--blue)}
+.badge-num{background:#e8eaf6;color:#3949ab;font-size:.85rem;padding:4px 10px}
 .btn{padding:8px 16px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer;border:none}
 .btn-primary{background:var(--navy);color:#fff}
 .btn-success{background:var(--green);color:#fff}
@@ -65,7 +66,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 .form-group label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
 .form-group input,.form-group select{padding:9px 12px;border:2px solid var(--border);border-radius:7px;font-size:.88rem;color:var(--txt);background:#f9fafb}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--navy);background:#fff}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
 .stat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:20px}
 .stat-val{font-size:2rem;font-weight:800;color:var(--navy);line-height:1}
 .stat-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;font-weight:600}
@@ -116,8 +117,9 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
     </div>
   </header>
   <div class="wrap">
-    <div class="tabs">
+    <div class="tabs" id="tabs-bar">
       <button class="tab active" onclick="showTab('registros',this)">Registros</button>
+      <button class="tab" id="tab-btn-produccion" style="display:none" onclick="showTab('produccion',this)">Produccion</button>
       <button class="tab" onclick="showTab('exportar',this)">Exportar</button>
       <button class="tab" onclick="showTab('empleados',this)">Empleados</button>
       <button class="tab" onclick="showTab('obras',this)">Obras</button>
@@ -128,6 +130,8 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
         <div class="stat-card"><div class="stat-val" id="st-entradas">-</div><div class="stat-lbl">Entradas hoy</div></div>
         <div class="stat-card"><div class="stat-val" id="st-epp">-</div><div class="stat-lbl">EPP confirmado</div></div>
         <div class="stat-card"><div class="stat-val" id="st-nov">-</div><div class="stat-lbl">Sin novedades</div></div>
+        <div class="stat-card" id="stat-cont" style="display:none"><div class="stat-val" id="st-cont">-</div><div class="stat-lbl">Contenedores hoy</div></div>
+        <div class="stat-card" id="stat-cert" style="display:none"><div class="stat-val" id="st-cert">-</div><div class="stat-lbl">Certificados hoy</div></div>
       </div>
       <div class="card">
         <div class="card-head">
@@ -142,9 +146,28 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
           </div>
         </div>
         <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th></tr></thead>
+          <table class="tbl" id="tbl-registros-wrap">
+            <thead id="thead-registros">
+              <tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th></tr>
+            </thead>
             <tbody id="tbl-registros"><tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="tab-produccion">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Resumen de produccion por empleado</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="date" id="prod-fecha" onchange="cargarProduccion()">
+            <button class="btn btn-primary btn-sm" onclick="cargarProduccion()">Ver</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Entrada</th><th>Salida</th><th>Horas</th><th>Contenedores</th><th>Certificados</th></tr></thead>
+            <tbody id="tbl-produccion"><tr><td colspan="8" class="loading">Selecciona una fecha</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -190,6 +213,20 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
             </div>
             <button class="btn btn-success btn-sm" onclick="exportarHoras()">Descargar Excel</button>
           </div>
+          <div class="export-card" id="export-prod-card" style="display:none">
+            <div class="export-card-title">Produccion mensual por empleado</div>
+            <p>Total de contenedores y certificados por empleado en el mes.</p>
+            <div class="export-row">
+              <select id="exp-mes-prod">
+                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+              </select>
+              <input type="number" id="exp-anio-prod" value="2026" min="2024" max="2030" style="width:90px;flex:none">
+            </div>
+            <button class="btn btn-success btn-sm" onclick="exportarProduccion()">Descargar Excel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -230,7 +267,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
       <div class="form-grid">
         <div class="form-group"><label>Cedula *</label><input id="emp-cedula" type="tel" maxlength="10" placeholder="0000000000"></div>
         <div class="form-group"><label>Nombre *</label><input id="emp-nombre" type="text"></div>
-        <div class="form-group"><label>Cargo</label><input id="emp-cargo" type="text" placeholder="Albanil"></div>
+        <div class="form-group"><label>Cargo</label><input id="emp-cargo" type="text" placeholder="Inspector"></div>
         <div class="form-group"><label>Obra *</label><select id="emp-obra"></select></div>
         <div class="form-group"><label>Turno inicio</label><input id="emp-turno-ini" type="text" placeholder="07:00"></div>
         <div class="form-group"><label>Turno fin</label><input id="emp-turno-fin" type="text" placeholder="16:00"></div>
@@ -267,12 +304,15 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 <script>
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
 var PASS_ADMIN='0000',clienteId='',scriptUrl='';
+var TIENE_PRODUCCION=false;
 var datosRegistros=[],datosEmpleados=[],datosObras=[];
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
 window.onload=function(){
   var mes=(new Date().getMonth()+1).toString().padStart(2,'0');
   document.getElementById('exp-mes').value=mes;
   document.getElementById('exp-mes-horas').value=mes;
+  document.getElementById('exp-mes-prod').value=mes;
+  document.getElementById('prod-fecha').value=new Date().toISOString().split('T')[0];
   var hoy=new Date().toISOString().split('T')[0];
   document.getElementById('exp-desde').value=hoy;
   document.getElementById('exp-hasta').value=hoy;
@@ -283,6 +323,14 @@ window.onload=function(){
     PASS_ADMIN=String(data.passAdmin)||'0000';
     document.getElementById('login-empresa').textContent=data.empresa||'Panel Admin';
     document.getElementById('hdr-empresa').textContent=data.empresa||'Panel Admin';
+    TIENE_PRODUCCION=!!(data.produccion||(clienteId==='tcis'));
+    if(TIENE_PRODUCCION){
+      document.getElementById('tab-btn-produccion').style.display='';
+      document.getElementById('stat-cont').style.display='';
+      document.getElementById('stat-cert').style.display='';
+      document.getElementById('export-prod-card').style.display='';
+      document.getElementById('thead-registros').innerHTML='<tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th><th>Contenedores</th><th>Certificados</th></tr>';
+    }
   });
 };
 function login(){
@@ -306,6 +354,7 @@ function showTab(name,el){
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='registros')cargarRegistros();
+  if(name==='produccion')cargarProduccion();
   if(name==='empleados')cargarEmpleados();
   if(name==='obras')cargarObras();
 }
@@ -326,21 +375,29 @@ function cargarTodo(){
 function cargarRegistros(){
   var fecha=document.getElementById('flt-fecha').value;
   var obra=document.getElementById('flt-obra').value;
-  document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  var cols=TIENE_PRODUCCION?11:9;
+  document.getElementById('tbl-registros').innerHTML='<tr><td colspan="'+cols+'" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
   llamar(scriptUrl,{accion:'getRegistros',fecha:fecha,obra:obra},function(data){
-    if(!data||!data.ok){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading">Error al cargar</td></tr>';return;}
+    if(!data||!data.ok){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="'+cols+'" class="loading">Error al cargar</td></tr>';return;}
     datosRegistros=data.registros||[];renderRegistros(datosRegistros);actualizarStats(datosRegistros);
   });
 }
 function renderRegistros(rows){
-  if(!rows.length){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading">Sin registros</td></tr>';return;}
+  var cols=TIENE_PRODUCCION?11:9;
+  if(!rows.length){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="'+cols+'" class="loading">Sin registros</td></tr>';return;}
   var html='';
   rows.forEach(function(r){
     var evt=r[4]||'';
     var evtB=evt==='Entrada'?'<span class="badge badge-green">'+evt+'</span>':evt==='Almuerzo'?'<span class="badge badge-orange">'+evt+'</span>':evt==='Regreso'?'<span class="badge badge-blue">'+evt+'</span>':'<span class="badge badge-red">'+evt+'</span>';
     var epp=r[7]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
     var nov=r[8]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
-    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td></tr>';
+    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td>';
+    if(TIENE_PRODUCCION){
+      var cont=r[9]&&r[9]!=='-'?'<span class="badge badge-num">'+r[9]+'</span>':'-';
+      var cert=r[10]&&r[10]!=='-'?'<span class="badge badge-num">'+r[10]+'</span>':'-';
+      html+='<td>'+cont+'</td><td>'+cert+'</td>';
+    }
+    html+='</tr>';
   });
   document.getElementById('tbl-registros').innerHTML=html;
 }
@@ -352,11 +409,41 @@ function actualizarStats(rows){
   document.getElementById('st-entradas').textContent=entradas.length;
   document.getElementById('st-epp').textContent=epp.length+'/'+entradas.length;
   document.getElementById('st-nov').textContent=nov.length+'/'+entradas.length;
+  if(TIENE_PRODUCCION){
+    var salidas=rows.filter(function(r){return r[4]==='Salida';});
+    document.getElementById('st-cont').textContent=salidas.reduce(function(s,r){return s+(parseInt(r[9])||0);},0);
+    document.getElementById('st-cert').textContent=salidas.reduce(function(s,r){return s+(parseInt(r[10])||0);},0);
+  }
 }
 function filtrarTabla(){
   var txt=document.getElementById('flt-nombre').value.toLowerCase();
   var filtrado=datosRegistros.filter(function(r){return !txt||String(r[2]).toLowerCase().includes(txt);});
   renderRegistros(filtrado);
+}
+function cargarProduccion(){
+  var fecha=document.getElementById('prod-fecha').value;
+  document.getElementById('tbl-produccion').innerHTML='<tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
+  llamar(scriptUrl,{accion:'getRegistros',fecha:fecha,obra:''},function(data){
+    if(!data||!data.ok){document.getElementById('tbl-produccion').innerHTML='<tr><td colspan="8" class="loading">Error</td></tr>';return;}
+    var rows=data.registros||[];
+    var empleados={};
+    rows.forEach(function(r){
+      var key=r[1];
+      if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],entrada:'',salida:'',cont:0,cert:0};
+      if(r[4]==='Entrada')empleados[key].entrada=r[5];
+      if(r[4]==='Salida'){empleados[key].salida=r[5];empleados[key].cont=parseInt(r[9])||0;empleados[key].cert=parseInt(r[10])||0;}
+    });
+    function toMins(t){if(!t)return 0;var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+    var html='';
+    Object.keys(empleados).forEach(function(k){
+      var e=empleados[k];
+      var mins=e.entrada&&e.salida?toMins(e.salida)-toMins(e.entrada):0;
+      var horas=mins>0?Math.round(mins/60*10)/10+' hrs':'-';
+      html+='<tr><td>'+e.cedula+'</td><td><strong>'+e.nombre+'</strong></td><td>'+e.obra+'</td><td>'+e.entrada+'</td><td>'+e.salida+'</td><td>'+horas+'</td><td><span class="badge badge-num">'+e.cont+'</span></td><td><span class="badge badge-num">'+e.cert+'</span></td></tr>';
+    });
+    if(!html)html='<tr><td colspan="8" class="loading">Sin registros para esta fecha</td></tr>';
+    document.getElementById('tbl-produccion').innerHTML=html;
+  });
 }
 function cargarEmpleados(){
   document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
@@ -414,7 +501,7 @@ function toCSV(headers,rows){
   return lines.join('\n');
 }
 function descargarCSV(csv,nombre){
-  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;a.download=nombre;a.click();
   URL.revokeObjectURL(url);
@@ -432,7 +519,9 @@ function exportarMes(){
   obtenerTodosRegistros(function(rows){
     var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
     if(!filtrado.length){alert('Sin registros para ese mes');return;}
-    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'],filtrado),'IACONTROL_Registros_'+prefix+'.csv');
+    var headers=['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'];
+    if(TIENE_PRODUCCION)headers.push('Contenedores','Certificados');
+    descargarCSV(toCSV(headers,filtrado),'IACONTROL_Registros_'+prefix+'.csv');
   });
 }
 function exportarRango(){
@@ -442,7 +531,9 @@ function exportarRango(){
   obtenerTodosRegistros(function(rows){
     var filtrado=rows.filter(function(r){return r[0]>=desde&&r[0]<=hasta;});
     if(!filtrado.length){alert('Sin registros en ese rango');return;}
-    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'],filtrado),'IACONTROL_Rango_'+desde+'_'+hasta+'.csv');
+    var headers=['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'];
+    if(TIENE_PRODUCCION)headers.push('Contenedores','Certificados');
+    descargarCSV(toCSV(headers,filtrado),'IACONTROL_Rango_'+desde+'_'+hasta+'.csv');
   });
 }
 function exportarHoras(){
@@ -480,6 +571,22 @@ function exportarHoras(){
       resumen.push([emp.cedula,emp.nombre,emp.obra,diasTrab,Math.round(totalMins/60*10)/10,Math.round(extraMins/60*10)/10]);
     });
     descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Horas Trabajadas','Horas Extra'],resumen),'IACONTROL_Horas_'+prefix+'.csv');
+  });
+}
+function exportarProduccion(){
+  var mes=document.getElementById('exp-mes-prod').value;
+  var anio=document.getElementById('exp-anio-prod').value;
+  var prefix=anio+'-'+mes;
+  obtenerTodosRegistros(function(rows){
+    var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
+    if(!filtrado.length){alert('Sin registros para ese mes');return;}
+    var empleados={};
+    filtrado.forEach(function(r){
+      var key=r[1];if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],dias:0,cont:0,cert:0};
+      if(r[4]==='Salida'){empleados[key].cont+=parseInt(r[9])||0;empleados[key].cert+=parseInt(r[10])||0;empleados[key].dias++;}
+    });
+    var resumen=[];Object.keys(empleados).forEach(function(k){var e=empleados[k];resumen.push([e.cedula,e.nombre,e.obra,e.dias,e.cont,e.cert]);});
+    descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Total Contenedores','Total Certificados'],resumen),'IACONTROL_Produccion_'+prefix+'.csv');
   });
 }
 function abrirModalEmpleado(){
