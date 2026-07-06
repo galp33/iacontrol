@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IACONTROL · Panel Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>IACONTROL</title>
 <style>
 :root{
   --navy:#1a3a5c;--navy2:#0f2238;--gold:#e8a020;
@@ -11,534 +13,424 @@
   --red:#c62828;--red-l:#ffebee;
   --orange:#e65100;--orange-l:#fff3e0;
   --blue:#1565c0;--blue-l:#e3f2fd;
-  --bg:#f0f3f7;--card:#fff;--border:#dde3ea;
+  --pink:#880e4f;--pink-l:#fce4ec;
+  --bg:#f0f3f7;--card:#ffffff;--border:#dde3ea;
   --txt:#1e2a38;--muted:#6b7a8d;
-  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.08);
+  --radius:14px;--shadow:0 2px 12px rgba(0,0,0,.08);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
-.login-box{background:var(--card);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);padding:40px 36px;width:100%;max-width:360px;text-align:center}
-.login-logo{width:56px;height:56px;background:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:var(--gold);margin:0 auto 16px}
-.login-title{font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:4px}
-.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:28px}
-.login-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:1.1rem;text-align:center;letter-spacing:8px;font-weight:700;color:var(--navy);background:#f9fafb;margin-bottom:12px}
-.login-input:focus{outline:none;border-color:var(--navy)}
-.btn-login{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer}
-.login-error{margin-top:10px;padding:8px 12px;background:var(--red-l);border-radius:6px;font-size:.8rem;color:var(--red);font-weight:600;display:none}
-#admin-screen{display:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);min-height:100vh;color:var(--txt)}
 header{background:var(--navy2);position:sticky;top:0;z-index:100}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;max-width:1200px;margin:0 auto}
-.hdr-brand{display:flex;align-items:center;gap:10px}
+.hdr-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;max-width:520px;margin:0 auto}
 .hdr-logo{width:32px;height:32px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:var(--navy2)}
-.hdr-title{color:#fff;font-size:.95rem;font-weight:700}
-.hdr-sub{color:rgba(255,255,255,.5);font-size:.68rem}
-.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:7px;padding:6px 14px;font-size:.78rem;cursor:pointer}
-.wrap{max-width:1200px;margin:0 auto;padding:24px}
-.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:10px;padding:5px;border:1px solid var(--border);width:fit-content;flex-wrap:wrap}
-.tab{padding:8px 20px;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:transparent}
-.tab.active{background:var(--navy);color:#fff}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
-.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.card-title{font-size:.95rem;font-weight:700;color:var(--navy)}
-.tbl{width:100%;border-collapse:collapse;font-size:.85rem}
-.tbl th{background:#f5f7fa;padding:10px 12px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border)}
-.tbl td{padding:10px 12px;border-bottom:1px solid #f0f3f7;vertical-align:middle}
-.tbl tr:hover td{background:#fafbfc}
-.tbl tr:last-child td{border-bottom:none}
-.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:.72rem;font-weight:700}
-.badge-green{background:var(--green-l);color:var(--green)}
-.badge-red{background:var(--red-l);color:var(--red)}
-.badge-orange{background:var(--orange-l);color:var(--orange)}
-.badge-blue{background:var(--blue-l);color:var(--blue)}
-.btn{padding:8px 16px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer;border:none}
-.btn-primary{background:var(--navy);color:#fff}
-.btn-success{background:var(--green);color:#fff}
-.btn-danger{background:var(--red);color:#fff}
-.btn-warning{background:var(--orange);color:#fff}
-.btn-sm{padding:5px 10px;font-size:.75rem}
-.btn-outline{background:#fff;border:2px solid var(--border);color:var(--txt)}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-group label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-.form-group input,.form-group select{padding:9px 12px;border:2px solid var(--border);border-radius:7px;font-size:.88rem;color:var(--txt);background:#f9fafb}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--navy);background:#fff}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
-.stat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:20px}
-.stat-val{font-size:2rem;font-weight:800;color:var(--navy);line-height:1}
-.stat-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;font-weight:600}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:14px;width:100%;max-width:560px;overflow:hidden}
-.modal-hd{padding:18px 20px;background:var(--navy);color:#fff;font-weight:700;font-size:.95rem;display:flex;justify-content:space-between;align-items:center}
-.modal-bd{padding:24px}
-.modal-ft{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
-.btn-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer}
-.loading{text-align:center;padding:40px;color:var(--muted);font-size:.9rem}
-.spinner-sm{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+.hdr-brand{display:flex;align-items:center;gap:10px}
+.hdr-title{color:#fff;font-size:.9rem;font-weight:600}
+.hdr-sub{color:rgba(255,255,255,.5);font-size:.68rem;margin-top:1px}
+.hdr-time{color:#fff;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px;text-align:right}
+.hdr-date{color:rgba(255,255,255,.5);font-size:.65rem;margin-top:2px;text-align:right}
+main{max-width:520px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+#screen-cedula{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:24px}
+.cedula-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);width:100%;max-width:380px;padding:32px 28px;text-align:center}
+.cedula-ico{font-size:3rem;margin-bottom:12px}
+.cedula-title{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:6px}
+.cedula-sub{font-size:.8rem;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.cedula-input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:10px;font-size:1.2rem;text-align:center;letter-spacing:3px;font-weight:700;color:var(--navy);background:#f9fafb;transition:border-color .2s}
+.cedula-input:focus{outline:none;border-color:var(--navy)}
+.cedula-input::placeholder{letter-spacing:1px;font-weight:400;font-size:.9rem;color:#b0bbc8}
+.btn-ingresar{width:100%;margin-top:14px;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+.cedula-error{margin-top:12px;padding:10px 14px;background:var(--red-l);border-radius:8px;font-size:.82rem;color:var(--red);font-weight:600;display:none}
+.licencia-vencida{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);padding:24px;text-align:center}
+.lic-box{background:var(--card);border-radius:var(--radius);border:2px solid var(--red);box-shadow:var(--shadow);width:100%;max-width:380px;padding:32px 28px}
+.lic-ico{font-size:3rem;margin-bottom:12px}
+.lic-title{font-size:1.1rem;font-weight:700;color:var(--red);margin-bottom:8px}
+.lic-sub{font-size:.85rem;color:var(--muted);line-height:1.6}
+.lic-contacto{margin-top:16px;padding:14px;background:var(--blue-l);border-radius:10px;font-size:.85rem;color:var(--blue);font-weight:600}
+#gps-banner{display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;font-size:.82rem;font-weight:700;text-align:center}
+.gps-checking{background:#fff8e1;color:#f57f17;border:1px solid #ffe082}
+.gps-ok{background:var(--green-l);color:var(--green);border:1px solid #a5d6a7}
+.gps-fail{background:var(--red-l);color:var(--red);border:1px solid #ef9a9a}
+.perfil-band{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--navy);color:#fff}
+.perf-nombre{font-size:.95rem;font-weight:700}
+.perf-meta{font-size:.72rem;opacity:.7;margin-top:3px}
+.btn-salir{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:7px;padding:5px 12px;font-size:.75rem;cursor:pointer}
+.prog-wrap{padding:14px 18px 16px}
+.prog-bar{display:flex;gap:3px;margin-bottom:6px}
+.prog-seg{flex:1;height:7px;border-radius:4px;background:#e8eaed;transition:background .3s}
+.prog-seg.done{background:var(--green)}
+.prog-seg.cur{background:var(--gold)}
+.prog-labels{display:flex}
+.prog-labels span{flex:1;font-size:.63rem;color:var(--muted);text-align:center}
+.eventos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.ev-btn{padding:24px 10px 20px;border:2px solid transparent;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;transition:all .15s}
+.ev-btn:hover:not(:disabled){transform:translateY(-2px)}
+.ev-btn:active:not(:disabled){transform:scale(.97)}
+.ev-btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+.ev-btn .ico{font-size:2rem;line-height:1}
+.ev-btn .lbl{font-size:.75rem;letter-spacing:.6px;font-weight:800}
+.ev-btn .hr{font-size:.78rem;font-weight:700;opacity:.85;min-height:1em}
+.btn-E{background:var(--green-l);color:var(--green)}
+.btn-A{background:var(--orange-l);color:var(--orange)}
+.btn-R{background:var(--blue-l);color:var(--blue)}
+.btn-S{background:var(--pink-l);color:var(--pink)}
+.ev-btn.done{border-color:currentColor}
+.ev-btn.next{box-shadow:0 0 0 3px var(--gold);animation:pulso 1.8s infinite}
+@keyframes pulso{0%,100%{box-shadow:0 0 0 3px rgba(232,160,32,.8)}50%{box-shadow:0 0 0 7px rgba(232,160,32,.15)}}
+.card-head{padding:14px 18px 10px;font-size:.7rem;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);font-weight:700}
+.resumen{padding:4px 18px 16px}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f3f7;font-size:.85rem}
+.res-row:last-child{border-bottom:none}
+.res-lbl{color:var(--muted)}
+.res-val{font-weight:700;color:var(--navy)}
+.res-extra{color:var(--orange);font-weight:700}
+.res-total{margin-top:4px;padding-top:8px;border-top:2px solid var(--border);display:flex;justify-content:space-between;font-size:.9rem}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:380px;overflow:hidden;text-align:center}
+.modal-head{padding:18px 20px;font-size:1rem;font-weight:700;line-height:1.3;color:#fff}
+.mh-navy{background:var(--navy)}
+.mh-red{background:var(--red)}
+.mh-orange{background:var(--orange)}
+.modal-body{padding:28px 24px}
+.modal-ico{font-size:3rem;margin-bottom:14px}
+.modal-txt{font-size:.92rem;color:var(--txt);line-height:1.6;margin-bottom:24px}
+.modal-txt strong{color:var(--navy)}
+.modal-btns{display:flex;flex-direction:column;gap:10px}
+.btn-si{padding:14px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer}
+.btn-no{padding:12px;background:#fff;color:var(--red);border:2px solid var(--red);border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer}
+.modal-aviso{display:none;margin-top:14px;padding:12px;border-radius:8px;font-size:.8rem;font-weight:600;line-height:1.5}
+.av-red{background:var(--red-l);color:var(--red)}
+.av-orange{background:var(--orange-l);color:var(--orange)}
+.rrhh-box{margin-top:12px;padding:14px;background:var(--blue-l);border-radius:10px;text-align:left}
+.rrhh-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--blue);font-weight:700;margin-bottom:4px}
+.rrhh-nom{font-size:.95rem;font-weight:700;color:var(--navy)}
+.rrhh-tel{font-size:.85rem;color:var(--muted);margin-top:2px}
+.btn-llamar{display:block;margin-top:10px;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+#spinner{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:400;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#spinner.show{display:flex}
+.spin-ring{width:44px;height:44px;border:4px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.filters input,.filters select{padding:8px 12px;border:2px solid var(--border);border-radius:7px;font-size:.85rem;color:var(--txt);background:#fff}
-.export-box{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
-.export-title{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:18px}
-.export-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.export-card{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:18px}
-.export-card-title{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:6px}
-.export-card p{font-size:.78rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.export-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-.export-row input,.export-row select{padding:7px 10px;border:2px solid var(--border);border-radius:6px;font-size:.82rem;flex:1;min-width:100px;background:#fff}
+.spin-txt{font-size:.85rem;color:var(--muted);font-weight:600}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy2);color:#fff;padding:12px 22px;border-radius:10px;font-size:.85rem;font-weight:600;z-index:600;transition:transform .3s;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#screen-panel{display:none}
 </style>
 </head>
 <body>
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">IA</div>
-    <div class="login-title">IACONTROL</div>
-    <div class="login-sub" id="login-empresa">Panel de Administracion</div>
-    <input class="login-input" id="inp-pass" type="password" maxlength="10" placeholder="••••" onkeydown="if(event.key==='Enter')login()">
-    <button class="btn-login" onclick="login()">Ingresar</button>
-    <div class="login-error" id="login-error">Contrasena incorrecta</div>
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-brand">
+      <div class="hdr-logo">IA</div>
+      <div>
+        <div class="hdr-title">IACONTROL</div>
+        <div class="hdr-sub" id="hdr-empresa">Control de Personal</div>
+      </div>
+    </div>
+    <div>
+      <div class="hdr-time" id="clk">00:00:00</div>
+      <div class="hdr-date" id="clk-fecha"></div>
+    </div>
+  </div>
+</header>
+<div class="licencia-vencida" id="screen-licencia">
+  <div class="lic-box">
+    <div class="lic-ico">&#x1F512;</div>
+    <div class="lic-title">Licencia vencida</div>
+    <div class="lic-sub">El servicio IACONTROL para tu empresa ha sido suspendido por falta de pago.</div>
+    <div class="lic-contacto">Contacta a tu administrador para renovar el acceso.</div>
   </div>
 </div>
-<div id="admin-screen">
-  <header>
-    <div class="hdr">
-      <div class="hdr-brand">
-        <div class="hdr-logo">IA</div>
+<div id="screen-cedula">
+  <div class="cedula-card">
+    <div class="cedula-ico">&#x1FAA6;</div>
+    <div class="cedula-title">Ingresa tu cedula</div>
+    <div class="cedula-sub">El sistema verificara tu identidad y ubicacion antes de registrar.</div>
+    <input class="cedula-input" id="inp-cedula" type="tel" maxlength="10"
+           placeholder="0000000000" inputmode="numeric"
+           oninput="this.value=this.value.replace(/\D/g,'')"
+           onkeydown="if(event.key==='Enter')verificarEmpleado()">
+    <button class="btn-ingresar" onclick="verificarEmpleado()">Verificar</button>
+    <div class="cedula-error" id="cedula-error"></div>
+  </div>
+</div>
+<div id="screen-panel">
+  <main>
+    <div id="gps-banner"></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="perfil-band">
         <div>
-          <div class="hdr-title">IACONTROL · <span id="hdr-empresa">Panel Admin</span></div>
-          <div class="hdr-sub">Control de Personal</div>
+          <div class="perf-nombre" id="p-nombre">-</div>
+          <div class="perf-meta" id="p-meta">-</div>
         </div>
+        <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
       </div>
-      <button class="btn-logout" onclick="logout()">Cerrar sesion</button>
-    </div>
-  </header>
-  <div class="wrap">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('registros',this)">Registros</button>
-      <button class="tab" onclick="showTab('exportar',this)">Exportar</button>
-      <button class="tab" onclick="showTab('empleados',this)">Empleados</button>
-      <button class="tab" onclick="showTab('obras',this)">Obras</button>
-    </div>
-    <div class="tab-content active" id="tab-registros">
-      <div class="stats">
-        <div class="stat-card"><div class="stat-val" id="st-total">-</div><div class="stat-lbl">Registros hoy</div></div>
-        <div class="stat-card"><div class="stat-val" id="st-entradas">-</div><div class="stat-lbl">Entradas hoy</div></div>
-        <div class="stat-card"><div class="stat-val" id="st-epp">-</div><div class="stat-lbl">EPP confirmado</div></div>
-        <div class="stat-card"><div class="stat-val" id="st-nov">-</div><div class="stat-lbl">Sin novedades</div></div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Registros de asistencia</div>
-          <button class="btn btn-primary btn-sm" onclick="cargarRegistros()">Actualizar</button>
+      <div class="prog-wrap">
+        <div class="prog-bar">
+          <div class="prog-seg" id="ps0"></div>
+          <div class="prog-seg" id="ps1"></div>
+          <div class="prog-seg" id="ps2"></div>
+          <div class="prog-seg" id="ps3"></div>
         </div>
-        <div style="padding:12px 20px">
-          <div class="filters">
-            <input type="date" id="flt-fecha" onchange="cargarRegistros()">
-            <select id="flt-obra" onchange="cargarRegistros()"><option value="">Todas las obras</option></select>
-            <input type="text" id="flt-nombre" placeholder="Buscar nombre..." oninput="filtrarTabla()">
-          </div>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th></tr></thead>
-            <tbody id="tbl-registros"><tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
-          </table>
+        <div class="prog-labels">
+          <span>Entrada</span><span>Almuerzo</span><span>Regreso</span><span>Salida</span>
         </div>
       </div>
     </div>
-    <div class="tab-content" id="tab-exportar">
-      <div class="export-box">
-        <div class="export-title">Exportar datos a Excel (CSV)</div>
-        <div class="export-grid">
-          <div class="export-card">
-            <div class="export-card-title">Registros del mes</div>
-            <p>Todos los registros de entrada, salida, almuerzo y regreso del mes seleccionado.</p>
-            <div class="export-row">
-              <select id="exp-mes">
-                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
-                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
-                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
-                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-              </select>
-              <input type="number" id="exp-anio" value="2026" min="2024" max="2030" style="width:90px;flex:none">
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="exportarMes()">Descargar Excel</button>
-          </div>
-          <div class="export-card">
-            <div class="export-card-title">Rango de fechas</div>
-            <p>Registros entre dos fechas especificas que elijas.</p>
-            <div class="export-row">
-              <input type="date" id="exp-desde">
-              <input type="date" id="exp-hasta">
-            </div>
-            <button class="btn btn-warning btn-sm" onclick="exportarRango()">Descargar Excel</button>
-          </div>
-          <div class="export-card">
-            <div class="export-card-title">Reporte de horas por empleado</div>
-            <p>Resumen de horas trabajadas y extras por empleado en el mes seleccionado.</p>
-            <div class="export-row">
-              <select id="exp-mes-horas">
-                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
-                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
-                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
-                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-              </select>
-              <input type="number" id="exp-anio-horas" value="2026" min="2024" max="2030" style="width:90px;flex:none">
-            </div>
-            <button class="btn btn-success btn-sm" onclick="exportarHoras()">Descargar Excel</button>
-          </div>
-        </div>
+    <div class="eventos">
+      <button class="ev-btn btn-E" id="btn-E" onclick="registrar('E')" disabled>
+        <span class="ico">&#x1F7E2;</span><span class="lbl">ENTRADA</span><span class="hr" id="hr-E"></span>
+      </button>
+      <button class="ev-btn btn-A" id="btn-A" onclick="registrar('A')" disabled>
+        <span class="ico">&#x1F37D;</span><span class="lbl">ALMUERZO</span><span class="hr" id="hr-A"></span>
+      </button>
+      <button class="ev-btn btn-R" id="btn-R" onclick="registrar('R')" disabled>
+        <span class="ico">&#x1F535;</span><span class="lbl">REGRESO</span><span class="hr" id="hr-R"></span>
+      </button>
+      <button class="ev-btn btn-S" id="btn-S" onclick="registrar('S')" disabled>
+        <span class="ico">&#x1F534;</span><span class="lbl">SALIDA</span><span class="hr" id="hr-S"></span>
+      </button>
+    </div>
+    <div class="card" id="card-resumen" style="display:none">
+      <div class="card-head">Resumen de hoy</div>
+      <div class="resumen">
+        <div class="res-row"><span class="res-lbl">Entrada</span><span class="res-val" id="rv-E">-</span></div>
+        <div class="res-row"><span class="res-lbl">Almuerzo</span><span class="res-val" id="rv-A">-</span></div>
+        <div class="res-row"><span class="res-lbl">Regreso</span><span class="res-val" id="rv-R">-</span></div>
+        <div class="res-row"><span class="res-lbl">Salida</span><span class="res-val" id="rv-S">-</span></div>
+        <div class="res-total"><span style="color:var(--muted)">Horas trabajadas</span><span class="res-val" id="rv-horas">-</span></div>
+        <div class="res-total" id="row-extra" style="display:none"><span style="color:var(--muted)">Horas extra</span><span class="res-extra" id="rv-extra">-</span></div>
       </div>
     </div>
-    <div class="tab-content" id="tab-empleados">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Empleados registrados</div>
-          <button class="btn btn-success btn-sm" onclick="abrirModalEmpleado()">+ Nuevo empleado</button>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Cedula</th><th>Nombre</th><th>Cargo</th><th>Obra</th><th>Turno</th><th>Jornada</th><th>Acciones</th></tr></thead>
-            <tbody id="tbl-empleados"><tr><td colspan="7" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="tab-content" id="tab-obras">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Obras configuradas</div>
-          <button class="btn btn-success btn-sm" onclick="abrirModalObra()">+ Nueva obra</button>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Nombre</th><th>Direccion</th><th>Coordenadas</th><th>Radio</th><th>RRHH</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-            <tbody id="tbl-obras"><tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+  </main>
 </div>
-<div class="modal-overlay" id="modal-empleado">
+<div class="modal" id="modal-epp">
   <div class="modal-box">
-    <div class="modal-hd"><span>Nuevo empleado</span><button class="btn-close" onclick="cerrarModal('modal-empleado')">x</button></div>
-    <div class="modal-bd">
-      <div class="form-grid">
-        <div class="form-group"><label>Cedula *</label><input id="emp-cedula" type="tel" maxlength="10" placeholder="0000000000"></div>
-        <div class="form-group"><label>Nombre *</label><input id="emp-nombre" type="text"></div>
-        <div class="form-group"><label>Cargo</label><input id="emp-cargo" type="text" placeholder="Albanil"></div>
-        <div class="form-group"><label>Obra *</label><select id="emp-obra"></select></div>
-        <div class="form-group"><label>Turno inicio</label><input id="emp-turno-ini" type="text" placeholder="07:00"></div>
-        <div class="form-group"><label>Turno fin</label><input id="emp-turno-fin" type="text" placeholder="16:00"></div>
-        <div class="form-group"><label>Jornada (hrs)</label><input id="emp-jornada" type="number" value="8" min="1" max="24"></div>
+    <div class="modal-head mh-navy">Equipos de Proteccion Personal</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x1F9BA;</div>
+      <div class="modal-txt">Confirmo que cuento con <strong>todos los equipos de proteccion personal (EPP)</strong> necesarios y en buen estado para realizar mi trabajo de forma segura.</div>
+      <div class="modal-btns">
+        <button class="btn-si" onclick="responderEPP(true)">Si - tengo todo el EPP</button>
+        <button class="btn-no" onclick="responderEPP(false)">No tengo todo el EPP</button>
       </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-outline" onclick="cerrarModal('modal-empleado')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarEmpleado()">Guardar</button>
+      <div class="modal-aviso av-red" id="aviso-epp">No puedes registrar tu entrada sin el EPP completo. Contacta a tu supervisor.</div>
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-obra">
+<div class="modal" id="modal-novedad">
   <div class="modal-box">
-    <div class="modal-hd"><span>Nueva obra</span><button class="btn-close" onclick="cerrarModal('modal-obra')">x</button></div>
-    <div class="modal-bd">
-      <div class="form-grid">
-        <div class="form-group"><label>Nombre *</label><input id="obra-nombre" type="text"></div>
-        <div class="form-group"><label>Direccion</label><input id="obra-dir" type="text"></div>
-        <div class="form-group"><label>Latitud *</label><input id="obra-lat" type="text" placeholder="-2.1894"></div>
-        <div class="form-group"><label>Longitud *</label><input id="obra-lng" type="text" placeholder="-79.8890"></div>
-        <div class="form-group"><label>Radio (m)</label><input id="obra-radio" type="number" value="200"></div>
-        <div class="form-group"><label>Estado</label><select id="obra-activa"><option value="SI">Activa</option><option value="NO">Inactiva</option></select></div>
-        <div class="form-group"><label>Nombre RRHH</label><input id="obra-rrhh-nom" type="text"></div>
-        <div class="form-group"><label>Telefono RRHH</label><input id="obra-rrhh-tel" type="tel"></div>
+    <div class="modal-head mh-orange">Declaracion de Novedades</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x1F4CB;</div>
+      <div class="modal-txt">Antes de iniciar tu jornada: tienes alguna <strong>novedad, accidente o siniestro</strong> que reportar?</div>
+      <div class="modal-btns">
+        <button class="btn-si" onclick="responderNovedad(false)">No - sin novedades</button>
+        <button class="btn-no" onclick="responderNovedad(true)">Si - tengo una novedad</button>
       </div>
-    </div>
-    <div class="modal-ft">
-      <button class="btn btn-outline" onclick="cerrarModal('modal-obra')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarObra()">Guardar</button>
+      <div class="modal-aviso av-orange" id="aviso-novedad">
+        Debes reportar tu novedad a RRHH antes de ingresar.
+        <div class="rrhh-box" id="rrhh-box" style="display:none">
+          <div class="rrhh-lbl">Contacto RRHH</div>
+          <div class="rrhh-nom" id="rrhh-nom">-</div>
+          <div class="rrhh-tel" id="rrhh-tel">-</div>
+          <a class="btn-llamar" id="rrhh-link" href="#">Llamar ahora</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+<div class="modal" id="modal-gps">
+  <div class="modal-box">
+    <div class="modal-head mh-red">Fuera del area asignada</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x1F4CD;</div>
+      <div class="modal-txt">No puedes registrar asistencia desde esta ubicacion.</div>
+      <div class="modal-aviso av-red" id="mgps-dist" style="display:block"></div>
+      <div class="modal-btns" style="margin-top:20px">
+        <button class="btn-si" onclick="document.getElementById('modal-gps').classList.remove('show')">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="spinner"><div class="spin-ring"></div><div class="spin-txt" id="spin-txt">Verificando...</div></div>
+<div id="toast"></div>
+<div id="jsonp-container" style="display:none"></div>
 <script>
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
-var PASS_ADMIN='0000',clienteId='',scriptUrl='';
-var datosRegistros=[],datosEmpleados=[],datosObras=[];
+var clienteId='',scriptUrl='';
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
+var FLUJO=['E','A','R','S'];
+var DIAS=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var empleadoActual=null,registrosHoy={};
+setInterval(function(){var n=new Date();document.getElementById('clk').textContent=n.toLocaleTimeString('es-EC',{hour12:false});document.getElementById('clk-fecha').textContent=DIAS[n.getDay()]+' '+n.getDate()+' '+MESES[n.getMonth()];},500);
 
 function hoy(){
   var n=new Date();
   return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
 }
-window.onload=function(){
-  var mes=(new Date().getMonth()+1).toString().padStart(2,'0');
-  document.getElementById('exp-mes').value=mes;
-  document.getElementById('exp-mes-horas').value=mes;
-  var hoyStr=hoy();
-  document.getElementById('exp-desde').value=hoyStr;
-  document.getElementById('exp-hasta').value=hoyStr;
-  if(!clienteId){alert('URL invalida. Falta ?cliente=');return;}
-  llamar(CENTRAL_URL,{accion:'getCliente',cliente:clienteId},function(data){
-    if(!data||!data.ok){alert('Cliente no encontrado.');return;}
-    scriptUrl=data.scriptUrl;
-    PASS_ADMIN=String(data.passAdmin)||'0000';
-    document.getElementById('login-empresa').textContent=data.empresa||'Panel Admin';
-    document.getElementById('hdr-empresa').textContent=data.empresa||'Panel Admin';
-  });
-};
-function login(){
-  var p=document.getElementById('inp-pass').value;
-  if(p===PASS_ADMIN){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('admin-screen').style.display='block';
-    cargarTodo();
-  } else {
-    document.getElementById('login-error').style.display='block';
-  }
-}
-function logout(){
-  document.getElementById('admin-screen').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('inp-pass').value='';
-}
-function showTab(name,el){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
-  el.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-  if(name==='registros')cargarRegistros();
-  if(name==='empleados')cargarEmpleados();
-  if(name==='obras')cargarObras();
-}
+function spinner(show,txt){document.getElementById('spinner').classList.toggle('show',show);if(txt)document.getElementById('spin-txt').textContent=txt;}
+function toast(msg,dur){dur=dur||3000;var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},dur);}
 function llamar(url,params,callback){
-  var cbName='adm_'+Date.now();
-  window[cbName]=function(data){delete window[cbName];callback(data);};
+  var cbName='gvcb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+  window[cbName]=function(data){delete window[cbName];document.getElementById('jsonp-container').innerHTML='';callback(data);};
   var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
   var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
-  s.onerror=function(){delete window[cbName];callback(null);};
-  document.body.appendChild(s);
-  setTimeout(function(){if(document.body.contains(s))document.body.removeChild(s);},30000);
+  s.onerror=function(){delete window[cbName];document.getElementById('jsonp-container').innerHTML='';callback(null);};
+  document.getElementById('jsonp-container').appendChild(s);
 }
-function cargarTodo(){
-  document.getElementById('flt-fecha').value=hoy();
-  cargarRegistros();cargarObrasBg();
-}
-function cargarRegistros(){
-  var fecha=document.getElementById('flt-fecha').value;
-  var obra=document.getElementById('flt-obra').value;
-  document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
-  llamar(scriptUrl,{accion:'getRegistros',fecha:fecha,obra:obra},function(data){
-    if(!data||!data.ok){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading">Error al cargar</td></tr>';return;}
-    datosRegistros=data.registros||[];renderRegistros(datosRegistros);actualizarStats(datosRegistros);
+window.onload=function(){
+  if(!clienteId){mostrarError('URL invalida. Falta ?cliente=');return;}
+  spinner(true,'Verificando acceso...');
+  llamar(CENTRAL_URL,{accion:'getCliente',cliente:clienteId},function(data){
+    spinner(false);
+    if(!data||!data.ok){mostrarError('Cliente no encontrado.');return;}
+    if(!data.activo){document.getElementById('screen-licencia').style.display='flex';return;}
+    scriptUrl=data.scriptUrl;
+    document.getElementById('hdr-empresa').textContent=data.empresa||'Control de Personal';
+    document.getElementById('screen-cedula').style.display='flex';
   });
+};
+function mostrarError(msg){
+  document.getElementById('screen-licencia').style.display='flex';
+  document.querySelector('.lic-title').textContent='Error';
+  document.querySelector('.lic-sub').textContent=msg;
 }
-function renderRegistros(rows){
-  if(!rows.length){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="9" class="loading">Sin registros</td></tr>';return;}
-  var html='';
-  rows.forEach(function(r){
-    var evt=r[4]||'';
-    var evtB=evt==='Entrada'?'<span class="badge badge-green">'+evt+'</span>':evt==='Almuerzo'?'<span class="badge badge-orange">'+evt+'</span>':evt==='Regreso'?'<span class="badge badge-blue">'+evt+'</span>':'<span class="badge badge-red">'+evt+'</span>';
-    var epp=r[7]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
-    var nov=r[8]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
-    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td></tr>';
-  });
-  document.getElementById('tbl-registros').innerHTML=html;
-}
-function actualizarStats(rows){
-  var entradas=rows.filter(function(r){return r[4]==='Entrada';});
-  var epp=entradas.filter(function(r){return r[7]==='SI';});
-  var nov=entradas.filter(function(r){return r[8]==='SI';});
-  document.getElementById('st-total').textContent=rows.length;
-  document.getElementById('st-entradas').textContent=entradas.length;
-  document.getElementById('st-epp').textContent=epp.length+'/'+entradas.length;
-  document.getElementById('st-nov').textContent=nov.length+'/'+entradas.length;
-}
-function filtrarTabla(){
-  var txt=document.getElementById('flt-nombre').value.toLowerCase();
-  var filtrado=datosRegistros.filter(function(r){return !txt||String(r[2]).toLowerCase().includes(txt);});
-  renderRegistros(filtrado);
-}
-function cargarEmpleados(){
-  document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
-  llamar(scriptUrl,{accion:'getEmpleados'},function(data){
-    if(!data||!data.ok){document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading">Error</td></tr>';return;}
-    datosEmpleados=data.empleados||[];renderEmpleados(datosEmpleados);
-  });
-}
-function renderEmpleados(rows){
-  if(!rows.length){document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading">Sin empleados</td></tr>';return;}
-  var html='';
-  rows.forEach(function(r,i){
-    html+='<tr><td>'+r[0]+'</td><td><strong>'+r[1]+'</strong></td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'-'+r[5]+'</td><td>'+r[6]+' hrs</td>';
-    html+='<td><button class="btn btn-danger btn-sm" onclick="eliminarEmpleado('+i+')">Eliminar</button></td></tr>';
-  });
-  document.getElementById('tbl-empleados').innerHTML=html;
-}
-function cargarObras(){
-  document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr>';
-  llamar(scriptUrl,{accion:'getObras'},function(data){
-    if(!data||!data.ok){document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading">Error</td></tr>';return;}
-    datosObras=data.obras||[];renderObras(datosObras);actualizarSelectObras(datosObras);
-  });
-}
-function cargarObrasBg(){
-  llamar(scriptUrl,{accion:'getObras'},function(data){
-    if(data&&data.ok){datosObras=data.obras||[];actualizarSelectObras(datosObras);}
-  });
-}
-function renderObras(rows){
-  if(!rows.length){document.getElementById('tbl-obras').innerHTML='<tr><td colspan="8" class="loading">Sin obras</td></tr>';return;}
-  var html='';
-  rows.forEach(function(r,i){
-    var activa=(r[5]==='SI')?'<span class="badge badge-green">Activa</span>':'<span class="badge badge-red">Inactiva</span>';
-    html+='<tr><td><strong>'+r[0]+'</strong></td><td>'+r[1]+'</td><td style="font-size:.78rem">'+r[2]+', '+r[3]+'</td><td>'+r[4]+' m</td><td>'+(r[6]||'-')+'</td><td>'+(r[7]||'-')+'</td><td>'+activa+'</td>';
-    html+='<td><button class="btn btn-danger btn-sm" onclick="eliminarObra('+i+')">Eliminar</button></td></tr>';
-  });
-  document.getElementById('tbl-obras').innerHTML=html;
-}
-function actualizarSelectObras(rows){
-  var sel=document.getElementById('flt-obra');
-  var selEmp=document.getElementById('emp-obra');
-  var val=sel.value;
-  sel.innerHTML='<option value="">Todas las obras</option>';
-  if(selEmp)selEmp.innerHTML='';
-  rows.forEach(function(r){
-    sel.innerHTML+='<option value="'+r[0]+'">'+r[0]+'</option>';
-    if(selEmp)selEmp.innerHTML+='<option value="'+r[0]+'">'+r[0]+'</option>';
-  });
-  sel.value=val;
-}
-function toCSV(headers,rows){
-  var lines=[headers.join(',')];
-  rows.forEach(function(r){lines.push(r.map(function(c){return '"'+(c||'').toString().replace(/"/g,'""')+'"';}).join(','));});
-  return lines.join('\n');
-}
-function descargarCSV(csv,nombre){
-  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');a.href=url;a.download=nombre;a.click();
-  URL.revokeObjectURL(url);
-}
-function obtenerTodosRegistros(callback){
-  llamar(scriptUrl,{accion:'getRegistros',fecha:'',obra:''},function(data){
-    if(!data||!data.ok){alert('Error al obtener datos');return;}
-    callback(data.registros||[]);
-  });
-}
-function exportarMes(){
-  var mes=document.getElementById('exp-mes').value;
-  var anio=document.getElementById('exp-anio').value;
-  var prefix=anio+'-'+mes;
-  obtenerTodosRegistros(function(rows){
-    var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
-    if(!filtrado.length){alert('Sin registros para ese mes');return;}
-    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'],filtrado),'IACONTROL_Registros_'+prefix+'.csv');
-  });
-}
-function exportarRango(){
-  var desde=document.getElementById('exp-desde').value;
-  var hasta=document.getElementById('exp-hasta').value;
-  if(!desde||!hasta){alert('Selecciona las dos fechas');return;}
-  obtenerTodosRegistros(function(rows){
-    var filtrado=rows.filter(function(r){return r[0]>=desde&&r[0]<=hasta;});
-    if(!filtrado.length){alert('Sin registros en ese rango');return;}
-    descargarCSV(toCSV(['Fecha','Cedula','Nombre','Obra','Evento','Hora','GPS','EPP','Sin Novedad'],filtrado),'IACONTROL_Rango_'+desde+'_'+hasta+'.csv');
-  });
-}
-function exportarHoras(){
-  var mes=document.getElementById('exp-mes-horas').value;
-  var anio=document.getElementById('exp-anio-horas').value;
-  var prefix=anio+'-'+mes;
-  obtenerTodosRegistros(function(rows){
-    var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
-    if(!filtrado.length){alert('Sin registros para ese mes');return;}
-    var empleados={};
-    filtrado.forEach(function(r){
-      var key=r[1]+'|'+r[2];
-      if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],dias:{}};
-      var dia=r[0];
-      if(!empleados[key].dias[dia])empleados[key].dias[dia]={E:'',A:'',R:'',S:''};
-      var evt=r[4];
-      if(evt==='Entrada')empleados[key].dias[dia].E=r[5];
-      if(evt==='Almuerzo')empleados[key].dias[dia].A=r[5];
-      if(evt==='Regreso')empleados[key].dias[dia].R=r[5];
-      if(evt==='Salida')empleados[key].dias[dia].S=r[5];
-    });
-    function toMins(t){if(!t)return 0;var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-    var resumen=[];
-    Object.keys(empleados).forEach(function(k){
-      var emp=empleados[k];
-      var totalMins=0,extraMins=0,diasTrab=0;
-      Object.keys(emp.dias).forEach(function(dia){
-        var d=emp.dias[dia];
-        if(d.E&&d.S){
-          var mins=toMins(d.S)-toMins(d.E);
-          if(d.A&&d.R)mins-=(toMins(d.R)-toMins(d.A));
-          if(mins>0){totalMins+=mins;if(mins>480)extraMins+=(mins-480);diasTrab++;}
-        }
+
+function verificarEmpleado(){
+  var ced=document.getElementById('inp-cedula').value.trim();
+  var errEl=document.getElementById('cedula-error');errEl.style.display='none';
+  if(ced.length<9){errEl.textContent='Ingresa tu numero de cedula.';errEl.style.display='block';return;}
+  spinner(true,'Buscando empleado...');
+  llamar(scriptUrl,{cedula:ced},function(data){
+    if(data&&data.ok){
+      empleadoActual=data.empleado;
+      spinner(true,'Verificando registros de hoy...');
+      llamar(scriptUrl,{accion:'getEstadoHoy',cedula:ced},function(estado){
+        spinner(false);
+        registrosHoy=(estado&&estado.ok)?estado.eventos:{};
+        guardarRegistrosLocales();
+        mostrarPanel();
       });
-      resumen.push([emp.cedula,emp.nombre,emp.obra,diasTrab,Math.round(totalMins/60*10)/10,Math.round(extraMins/60*10)/10]);
+      return;
+    }
+    spinner(false);
+    if(data&&data.msg==='licencia_vencida'){document.getElementById('screen-cedula').style.display='none';document.getElementById('screen-licencia').style.display='flex';return;}
+    errEl.textContent=data?'Cedula no registrada. Contacta a tu supervisor.':'Sin conexion. Intenta de nuevo.';
+    errEl.style.display='block';
+  });
+}
+function cargarRegistrosLocales(){try{registrosHoy=JSON.parse(localStorage.getItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy())||'{}');}catch(e){registrosHoy={};}}
+function guardarRegistrosLocales(){localStorage.setItem('iac_'+clienteId+'_'+empleadoActual.cedula+'_'+hoy(),JSON.stringify(registrosHoy));}
+function mostrarPanel(){
+  document.getElementById('screen-cedula').style.display='none';
+  document.getElementById('screen-panel').style.display='block';
+  document.getElementById('p-nombre').textContent=empleadoActual.nombre;
+  document.getElementById('p-meta').textContent=empleadoActual.cargo+' - '+empleadoActual.obra+' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
+  renderDia();verificarGPS();
+}
+function cerrarSesion(){
+  empleadoActual=null;registrosHoy={};
+  document.getElementById('inp-cedula').value='';
+  document.getElementById('cedula-error').style.display='none';
+  document.getElementById('gps-banner').style.display='none';
+  document.getElementById('screen-panel').style.display='none';
+  document.getElementById('screen-cedula').style.display='flex';
+}
+function verificarGPS(callback){
+  var banner=document.getElementById('gps-banner');var e=empleadoActual;
+  if(!e.lat||!e.lng){banner.style.display='none';if(callback)callback(true,0);return;}
+  banner.className='gps-checking';banner.textContent='Verificando tu ubicacion...';banner.style.display='block';
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var dist=calcDist(pos.coords.latitude,pos.coords.longitude,e.lat,e.lng);var ok=dist<=e.radio;
+      if(ok){banner.className='gps-ok';banner.textContent='Ubicacion confirmada - a '+Math.round(dist)+' m';setTimeout(function(){banner.style.display='none';},4000);}
+      else{banner.style.display='none';document.getElementById('mgps-dist').textContent='Estas a '+Math.round(dist)+' m - Maximo: '+e.radio+' m';document.getElementById('modal-gps').classList.add('show');}
+      if(callback)callback(ok,dist);
+    },
+    function(){banner.className='gps-fail';banner.textContent='Activa el GPS en tu celular';if(callback)callback(false,-1);},
+    {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+  );
+}
+function calcDist(lat1,lon1,lat2,lon2){var R=6371000,dL=(lat2-lat1)*Math.PI/180,dO=(lon2-lon1)*Math.PI/180;var a=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dO/2)*Math.sin(dO/2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function registrar(evt){
+  var idx=FLUJO.indexOf(evt);var ultimo=FLUJO.filter(function(k){return registrosHoy[k];}).pop();var idxUlt=ultimo?FLUJO.indexOf(ultimo):-1;
+  if(idx!==idxUlt+1){toast('Sigue el orden: Entrada - Almuerzo - Regreso - Salida');return;}
+  if(evt==='E'){document.getElementById('aviso-epp').style.display='none';document.getElementById('modal-epp').classList.add('show');return;}
+  ejecutarRegistro(evt,false,false);
+}
+function responderEPP(tiene){
+  if(!tiene){document.getElementById('aviso-epp').style.display='block';return;}
+  document.getElementById('modal-epp').classList.remove('show');
+  document.getElementById('aviso-novedad').style.display='none';
+  document.getElementById('rrhh-box').style.display='none';
+  document.getElementById('modal-novedad').classList.add('show');
+}
+function responderNovedad(tieneNovedad){
+  if(tieneNovedad){
+    document.getElementById('aviso-novedad').style.display='block';
+    if(empleadoActual.rrhhNombre||empleadoActual.rrhhTel){
+      document.getElementById('rrhh-nom').textContent=empleadoActual.rrhhNombre||'RRHH';
+      document.getElementById('rrhh-tel').textContent=empleadoActual.rrhhTel||'';
+      document.getElementById('rrhh-link').href='tel:'+empleadoActual.rrhhTel;
+      document.getElementById('rrhh-box').style.display='block';
+    }
+    return;
+  }
+  document.getElementById('modal-novedad').classList.remove('show');
+  ejecutarRegistro('E',true,true);
+}
+
+function ejecutarRegistro(evt,epp,sinNovedad){
+  spinner(true,'Verificando ubicacion...');
+  verificarGPS(function(ok,dist){
+    if(!ok){spinner(false);return;}
+    spinner(true,'Registrando...');
+    var params={
+      accion:'registrar',
+      cedula:empleadoActual.cedula,
+      nombre:empleadoActual.nombre,
+      obra:empleadoActual.obra,
+      evento:nombreEvt(evt),
+      distancia_m:Math.round(dist),
+      epp_confirmado:epp,
+      sin_novedad:sinNovedad
+    };
+    llamar(scriptUrl,params,function(resp){
+      spinner(false);
+      if(!resp||!resp.ok){
+        toast(resp&&resp.msg?resp.msg:'No se pudo registrar. Intenta de nuevo.',4000);
+        return;
+      }
+      var hora=resp.hora;
+      registrosHoy[evt]=hora;if(epp)registrosHoy['epp']=hora;
+      guardarRegistrosLocales();renderDia();
+      toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
     });
-    descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Horas Trabajadas','Horas Extra'],resumen),'IACONTROL_Horas_'+prefix+'.csv');
   });
 }
-function abrirModalEmpleado(){
-  actualizarSelectObras(datosObras);
-  ['emp-cedula','emp-nombre','emp-cargo','emp-turno-ini','emp-turno-fin'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('emp-jornada').value=8;
-  document.getElementById('modal-empleado').classList.add('show');
-}
-function abrirModalObra(){
-  ['obra-nombre','obra-dir','obra-lat','obra-lng','obra-rrhh-nom','obra-rrhh-tel'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('obra-radio').value=200;
-  document.getElementById('obra-activa').value='SI';
-  document.getElementById('modal-obra').classList.add('show');
-}
-function cerrarModal(id){document.getElementById(id).classList.remove('show');}
-function guardarEmpleado(){
-  var cedula=document.getElementById('emp-cedula').value.trim();
-  var nombre=document.getElementById('emp-nombre').value.trim();
-  var cargo=document.getElementById('emp-cargo').value.trim();
-  var obra=document.getElementById('emp-obra').value;
-  var ini=document.getElementById('emp-turno-ini').value.trim();
-  var fin=document.getElementById('emp-turno-fin').value.trim();
-  var jornada=document.getElementById('emp-jornada').value;
-  if(!cedula||!nombre||!obra){alert('Completa: Cedula, Nombre y Obra.');return;}
-  llamar(scriptUrl,{accion:'addEmpleado',cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
-    if(data&&data.ok){cerrarModal('modal-empleado');cargarEmpleados();alert('Empleado guardado.');}
-    else alert('Error al guardar.');
+function nombreEvt(k){return{E:'Entrada',A:'Almuerzo',R:'Regreso',S:'Salida'}[k]||k;}
+function renderDia(){
+  var realesKeys=FLUJO.filter(function(k){return registrosHoy[k];});var idxUlt=realesKeys.length-1;
+  FLUJO.forEach(function(k,i){
+    var btn=document.getElementById('btn-'+k);var hrEl=document.getElementById('hr-'+k);var ps=document.getElementById('ps'+i);
+    var done=!!registrosHoy[k];var next=i===idxUlt+1;
+    btn.disabled=!done&&!next;btn.classList.toggle('done',done);btn.classList.toggle('next',next);
+    hrEl.textContent=registrosHoy[k]||'';ps.className='prog-seg'+(done?' done':next?' cur':'');
+    var rv=document.getElementById('rv-'+k);if(rv)rv.textContent=registrosHoy[k]||'-';
   });
+  if(Object.keys(registrosHoy).length>0){document.getElementById('card-resumen').style.display='block';calcularHoras();}
 }
-function guardarObra(){
-  var nombre=document.getElementById('obra-nombre').value.trim();
-  var dir=document.getElementById('obra-dir').value.trim();
-  var lat=document.getElementById('obra-lat').value.trim();
-  var lng=document.getElementById('obra-lng').value.trim();
-  var radio=document.getElementById('obra-radio').value;
-  var activa=document.getElementById('obra-activa').value;
-  var rrhhNom=document.getElementById('obra-rrhh-nom').value.trim();
-  var rrhhTel=document.getElementById('obra-rrhh-tel').value.trim();
-  if(!nombre||!lat||!lng){alert('Completa: Nombre, Latitud y Longitud.');return;}
-  llamar(scriptUrl,{accion:'addObra',nombre:nombre,dir:dir,lat:lat,lng:lng,radio:radio,activa:activa,rrhhNombre:rrhhNom,rrhhTel:rrhhTel},function(data){
-    if(data&&data.ok){cerrarModal('modal-obra');cargarObras();alert('Obra guardada.');}
-    else alert('Error al guardar.');
-  });
-}
-function eliminarEmpleado(idx){
-  if(!confirm('Eliminar este empleado?'))return;
-  llamar(scriptUrl,{accion:'delEmpleado',cedula:datosEmpleados[idx][0]},function(data){
-    if(data&&data.ok)cargarEmpleados();else alert('Error al eliminar.');
-  });
-}
-function eliminarObra(idx){
-  if(!confirm('Eliminar esta obra?'))return;
-  llamar(scriptUrl,{accion:'delObra',nombre:datosObras[idx][0]},function(data){
-    if(data&&data.ok)cargarObras();else alert('Error al eliminar.');
-  });
+function calcularHoras(){
+  var E=registrosHoy['E'],A=registrosHoy['A'],R=registrosHoy['R'],S=registrosHoy['S'];
+  if(!E||!S)return;
+  function toMins(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+  var mins=toMins(S)-toMins(E);if(A&&R)mins-=(toMins(R)-toMins(A));
+  var hTrab=Math.round(mins/60*10)/10;var hExtra=Math.max(0,Math.round((mins-empleadoActual.jornadaHrs*60)/60*10)/10);
+  document.getElementById('rv-horas').textContent=hTrab+' hrs';
+  var rowExtra=document.getElementById('row-extra');
+  if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs';rowExtra.style.display='flex';}
+  else rowExtra.style.display='none';
 }
 </script>
 </body>
