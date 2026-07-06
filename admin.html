@@ -287,6 +287,11 @@ window.onload=function(){
 };
 function login(){
   var p=document.getElementById('inp-pass').value;
+  if(!scriptUrl){
+    document.getElementById('login-error').textContent='Todavia cargando datos de la empresa, espera un segundo e intenta de nuevo.';
+    document.getElementById('login-error').style.display='block';
+    return;
+  }
   if(p===PASS_ADMIN){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
