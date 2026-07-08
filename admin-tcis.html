@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>IACONTROL · TCIS Admin</title>
 <style>
 :root{
@@ -289,22 +292,38 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
 var PASS_ADMIN='2026',scriptUrl='';
 var datosRegistros=[],datosEmpleados=[],datosObras=[];
+
+function hoyLocal(){
+  var n=new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+}
 window.onload=function(){
   var mes=(new Date().getMonth()+1).toString().padStart(2,'0');
   document.getElementById('exp-mes').value=mes;
   document.getElementById('exp-mes-prod').value=mes;
-  document.getElementById('prod-fecha').value=new Date().toISOString().split('T')[0];
-  var hoy=new Date().toISOString().split('T')[0];
+  document.getElementById('prod-fecha').value=hoyLocal();
+  var hoy=hoyLocal();
   document.getElementById('exp-desde').value=hoy;
   document.getElementById('exp-hasta').value=hoy;
   llamar(CENTRAL_URL,{accion:'getCliente',cliente:'tcis'},function(data){
     if(data&&data.ok){scriptUrl=data.scriptUrl;PASS_ADMIN=String(data.passAdmin)||'2026';}
   });
 };
+
 function login(){
   var p=document.getElementById('inp-pass').value;
-  if(p===PASS_ADMIN){document.getElementById('login-screen').style.display='none';document.getElementById('admin-screen').style.display='block';cargarTodo();}
-  else document.getElementById('login-error').style.display='block';
+  if(!scriptUrl){
+    document.getElementById('login-error').textContent='Todavia cargando datos de la empresa, espera un segundo e intenta de nuevo.';
+    document.getElementById('login-error').style.display='block';
+    return;
+  }
+  if(p===PASS_ADMIN){
+    document.getElementById('login-screen').style.display='none';document.getElementById('admin-screen').style.display='block';cargarTodo();
+  }
+  else{
+    document.getElementById('login-error').textContent='Contrasena incorrecta';
+    document.getElementById('login-error').style.display='block';
+  }
 }
 function logout(){document.getElementById('admin-screen').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('inp-pass').value='';}
 function showTab(name,el){
@@ -317,7 +336,7 @@ function showTab(name,el){
   if(name==='obras')cargarObras();
 }
 function llamar(url,params,callback){
-  var cbName='adm_'+Date.now();
+  var cbName='adm_'+Date.now()+'_'+Math.floor(Math.random()*100000);
   window[cbName]=function(data){delete window[cbName];callback(data);};
   var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
   var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
@@ -326,7 +345,7 @@ function llamar(url,params,callback){
   setTimeout(function(){if(document.body.contains(s))document.body.removeChild(s);},30000);
 }
 function cargarTodo(){
-  var hoy=new Date().toISOString().split('T')[0];
+  var hoy=hoyLocal();
   document.getElementById('flt-fecha').value=hoy;
   cargarRegistros();cargarObrasBg();
 }
