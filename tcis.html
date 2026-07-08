@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>IACONTROL · TCIS</title>
 <style>
 :root{
@@ -293,11 +296,15 @@ var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','se
 var empleadoActual=null,registrosHoy={};
 var TURNO_INICIO=6,TURNO_FIN=18;
 setInterval(function(){var n=new Date();document.getElementById('clk').textContent=n.toLocaleTimeString('es-EC',{hour12:false});document.getElementById('clk-fecha').textContent=DIAS[n.getDay()]+' '+n.getDate()+' '+MESES[n.getMonth()];},500);
-function hoy(){return new Date().toISOString().split('T')[0];}
+
+function hoy(){
+  var n=new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+}
 function spinner(show,txt){document.getElementById('spinner').classList.toggle('show',show);if(txt)document.getElementById('spin-txt').textContent=txt;}
 function toast(msg,dur){dur=dur||3000;var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},dur);}
 function llamar(url,params,callback){
-  var cbName='gvcb_'+Date.now();
+  var cbName='gvcb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
   window[cbName]=function(data){delete window[cbName];document.getElementById('jsonp-container').innerHTML='';callback(data);};
   var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
   var s=document.createElement('script');s.src=url+'?'+qs+'&callback='+cbName;
@@ -317,14 +324,25 @@ window.onload=function(){
   });
 };
 function mostrarError(msg){document.getElementById('screen-licencia').style.display='flex';document.querySelector('.lic-title').textContent='Error';document.querySelector('.lic-sub').textContent=msg;}
+
 function verificarEmpleado(){
   var ced=document.getElementById('inp-cedula').value.trim();
   var errEl=document.getElementById('cedula-error');errEl.style.display='none';
   if(ced.length<9){errEl.textContent='Ingresa tu numero de cedula.';errEl.style.display='block';return;}
   spinner(true,'Buscando empleado...');
   llamar(scriptUrl,{cedula:ced},function(data){
+    if(data&&data.ok){
+      empleadoActual=data.empleado;
+      spinner(true,'Verificando registros de hoy...');
+      llamar(scriptUrl,{accion:'getEstadoHoy',cedula:ced},function(estado){
+        spinner(false);
+        registrosHoy=(estado&&estado.ok)?estado.eventos:{};
+        guardarRegistrosLocales();
+        mostrarPanel();
+      });
+      return;
+    }
     spinner(false);
-    if(data&&data.ok){empleadoActual=data.empleado;cargarRegistrosLocales();mostrarPanel();return;}
     errEl.textContent=data?'Cedula no registrada. Contacta a tu supervisor.':'Sin conexion. Intenta de nuevo.';
     errEl.style.display='block';
   });
@@ -402,17 +420,36 @@ function confirmarProduccion(){
   document.getElementById('modal-produccion').classList.remove('show');
   ejecutarRegistro('S',false,false,cont,cert);
 }
+
 function ejecutarRegistro(evt,epp,sinNovedad,contenedores,certificados){
   spinner(true,'Verificando ubicacion...');
   verificarGPS(function(ok,dist){
-    spinner(false);if(!ok)return;
-    var hora=new Date().toLocaleTimeString('es-EC',{hour12:false});
-    registrosHoy[evt]=hora;
-    if(epp)registrosHoy['epp']=hora;
-    if(evt==='S'){registrosHoy['contenedores']=contenedores;registrosHoy['certificados']=certificados;}
-    guardarRegistrosLocales();renderDia();
-    enviarAlServidor(evt,hora,dist,epp,sinNovedad,contenedores,certificados);
-    toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
+    if(!ok){spinner(false);return;}
+    spinner(true,'Registrando...');
+    var params={
+      accion:'registrar',
+      cedula:empleadoActual.cedula,
+      nombre:empleadoActual.nombre,
+      obra:empleadoActual.obra,
+      evento:nombreEvt(evt),
+      distancia_m:Math.round(dist),
+      epp_confirmado:epp,
+      sin_novedad:sinNovedad,
+      contenedores:contenedores,
+      certificados:certificados
+    };
+    llamar(scriptUrl,params,function(resp){
+      spinner(false);
+      if(!resp||!resp.ok){
+        toast(resp&&resp.msg?resp.msg:'No se pudo registrar. Intenta de nuevo.',4000);
+        return;
+      }
+      var hora=resp.hora;
+      registrosHoy[evt]=hora;if(epp)registrosHoy['epp']=hora;
+      if(evt==='S'){registrosHoy['contenedores']=contenedores;registrosHoy['certificados']=certificados;}
+      guardarRegistrosLocales();renderDia();
+      toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
+    });
   });
 }
 function nombreEvt(k){return{E:'Entrada',A:'Almuerzo',R:'Regreso',S:'Salida'}[k]||k;}
@@ -441,11 +478,6 @@ function calcularHoras(){
   var rowExtra=document.getElementById('row-extra');
   if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs extra';rowExtra.style.display='flex';}
   else rowExtra.style.display='none';
-}
-function enviarAlServidor(evento,hora,distancia,epp,sinNovedad,contenedores,certificados){
-  fetch(scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({accion:'registro',cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra,evento:nombreEvt(evento),hora:hora,fecha:hoy(),distancia_m:Math.round(distancia),epp_confirmado:epp,sin_novedad:sinNovedad,contenedores:contenedores,certificados:certificados})
-  }).catch(function(){});
 }
 </script>
 </body>
