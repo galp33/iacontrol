@@ -200,6 +200,7 @@ main{max-width:520px;margin:0 auto;padding:16px}
         <div class="res-row"><span class="res-lbl">Almuerzo</span><span class="res-val" id="rv-A">-</span></div>
         <div class="res-row"><span class="res-lbl">Regreso</span><span class="res-val" id="rv-R">-</span></div>
         <div class="res-row"><span class="res-lbl">Salida</span><span class="res-val" id="rv-S">-</span></div>
+        <div class="res-row" id="row-atraso" style="display:none"><span class="res-lbl">Atraso</span><span class="res-val" id="rv-atraso" style="color:var(--red)">-</span></div>
         <div class="res-total"><span style="color:var(--muted)">Horas trabajadas</span><span class="res-val" id="rv-horas">-</span></div>
         <div class="res-total" id="row-extra" style="display:none"><span style="color:var(--muted)">Horas extra</span><span class="res-extra" id="rv-extra">-</span></div>
       </div>
@@ -255,6 +256,19 @@ main{max-width:520px;margin:0 auto;padding:16px}
     </div>
   </div>
 </div>
+  <div class="modal" id="modal-extra">
+  <div class="modal-box">
+    <div class="modal-head mh-orange">Horas Extra</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x23F0;</div>
+      <div class="modal-txt">Estas marcando tu salida <strong>despues de las 5:00 pm</strong>. Este tiempo extra fue autorizado por tu supervisor?</div>
+      <div class="modal-btns">
+        <button class="btn-si" onclick="responderHorasExtra(true)">Si - fue AUTORIZADA</button>
+        <button class="btn-no" onclick="responderHorasExtra(false)">No fue autorizada</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="spinner"><div class="spin-ring"></div><div class="spin-txt" id="spin-txt">Verificando...</div></div>
 <div id="toast"></div>
 <div id="jsonp-container" style="display:none"></div>
@@ -263,6 +277,8 @@ var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADR
 var clienteId='',scriptUrl='';
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
 var FLUJO=['E','A','R','S'];
+var JORNADA_INICIO_MIN = 8*60;   // 08:00
+var JORNADA_FIN_MIN    = 17*60;  // 17:00
 var DIAS=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
 var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 var empleadoActual=null,registrosHoy={};
