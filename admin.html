@@ -119,12 +119,13 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
     </div>
   </header>
   <div class="wrap">
-    <div class="tabs">
-      <button class="tab active" onclick="showTab('registros',this)">Registros</button>
-      <button class="tab" onclick="showTab('exportar',this)">Exportar</button>
-      <button class="tab" onclick="showTab('empleados',this)">Empleados</button>
-      <button class="tab" onclick="showTab('obras',this)">Obras</button>
-    </div>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('registros',this)">Registros</button>
+  <button class="tab" onclick="showTab('reportes',this)">Reportes</button>
+  <button class="tab" onclick="showTab('exportar',this)">Exportar</button>
+  <button class="tab" onclick="showTab('empleados',this)">Empleados</button>
+  <button class="tab" onclick="showTab('obras',this)">Obras</button>
+</div>
     <div class="tab-content active" id="tab-registros">
       <div class="stats">
         <div class="stat-card"><div class="stat-val" id="st-total">-</div><div class="stat-lbl">Registros hoy</div></div>
@@ -148,6 +149,62 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
           <table class="tbl">
             <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th></tr></thead>
             <tbody id="tbl-registros"><tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+   <div class="tab-content" id="tab-reportes">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Filtro de periodo</div>
+        </div>
+        <div style="padding:16px 20px">
+          <div class="filters">
+            <label style="font-size:.8rem;font-weight:700;color:var(--muted)">Desde</label>
+            <input type="date" id="rep-desde">
+            <label style="font-size:.8rem;font-weight:700;color:var(--muted)">Hasta</label>
+            <input type="date" id="rep-hasta">
+            <button class="btn btn-primary btn-sm" onclick="generarReportes()">Generar reportes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Asistencia por obra</div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Obra</th><th>Dias con registros</th><th>Entradas totales</th><th>Promedio entradas/dia</th></tr></thead>
+            <tbody id="tbl-rep-obra"><tr><td colspan="4" class="loading">Selecciona un periodo y genera el reporte</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Inconsistencias (entrada sin salida)</div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Entrada</th><th>Falta</th></tr></thead>
+            <tbody id="tbl-rep-inconsist"><tr><td colspan="6" class="loading">Selecciona un periodo y genera el reporte</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">EPP y Novedades</div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>EPP</th><th>Sin Novedad</th></tr></thead>
+            <tbody id="tbl-rep-epp"><tr><td colspan="6" class="loading">Selecciona un periodo y genera el reporte</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Ranking de atrasos</div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>#</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Dias con atraso</th><th>Atraso total (min)</th></tr></thead>
+            <tbody id="tbl-rep-atrasos"><tr><td colspan="6" class="loading">Selecciona un periodo y genera el reporte</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -433,6 +490,93 @@ function obtenerTodosRegistros(callback){
     callback(data.registros||[]);
   });
 }
+ function generarReportes(){
+  var desde=document.getElementById('rep-desde').value;
+  var hasta=document.getElementById('rep-hasta').value;
+  if(!desde||!hasta){alert('Selecciona las dos fechas');return;}
+  ['tbl-rep-obra','tbl-rep-inconsist','tbl-rep-epp','tbl-rep-atrasos'].forEach(function(id){
+    document.getElementById(id).innerHTML='<tr><td colspan="6" class="loading"><span class="spinner-sm"></span>Calculando...</td></tr>';
+  });
+  obtenerTodosRegistros(function(rows){
+    var filtrado=rows.filter(function(r){return r[0]>=desde&&r[0]<=hasta;});
+    renderRepObra(filtrado);
+    renderRepInconsist(filtrado);
+    renderRepEpp(filtrado);
+    renderRepAtrasos(filtrado);
+  });
+}
+ function renderRepObra(rows){
+  var porObra={};
+  rows.forEach(function(r){
+    var obra=r[3]||'-';
+    if(!porObra[obra])porObra[obra]={dias:{},entradas:0};
+    if(r[4]==='Entrada'){
+      porObra[obra].entradas++;
+      porObra[obra].dias[r[0]]=true;
+    }
+  });
+  var claves=Object.keys(porObra);
+  if(!claves.length){document.getElementById('tbl-rep-obra').innerHTML='<tr><td colspan="4" class="loading">Sin datos en el periodo</td></tr>';return;}
+  var html='';
+  claves.forEach(function(obra){
+    var d=porObra[obra];
+    var numDias=Object.keys(d.dias).length;
+    var prom=numDias?Math.round(d.entradas/numDias*10)/10:0;
+    html+='<tr><td><strong>'+obra+'</strong></td><td>'+numDias+'</td><td>'+d.entradas+'</td><td>'+prom+'</td></tr>';
+  });
+  document.getElementById('tbl-rep-obra').innerHTML=html;
+}
+
+function renderRepInconsist(rows){
+  var porDiaEmp={};
+  rows.forEach(function(r){
+    var key=r[0]+'|'+r[1];
+    if(!porDiaEmp[key])porDiaEmp[key]={fecha:r[0],cedula:r[1],nombre:r[2],obra:r[3],E:'',S:''};
+    if(r[4]==='Entrada')porDiaEmp[key].E=r[5];
+    if(r[4]==='Salida')porDiaEmp[key].S=r[5];
+  });
+  var incompletos=Object.keys(porDiaEmp).map(function(k){return porDiaEmp[k];}).filter(function(d){return d.E&&!d.S;});
+  if(!incompletos.length){document.getElementById('tbl-rep-inconsist').innerHTML='<tr><td colspan="6" class="loading">Sin inconsistencias en el periodo</td></tr>';return;}
+  var html='';
+  incompletos.forEach(function(d){
+    html+='<tr><td>'+d.fecha+'</td><td>'+d.cedula+'</td><td><strong>'+d.nombre+'</strong></td><td>'+d.obra+'</td><td>'+d.E+'</td><td><span class="badge badge-red">Falta Salida</span></td></tr>';
+  });
+  document.getElementById('tbl-rep-inconsist').innerHTML=html;
+}
+
+function renderRepEpp(rows){
+  var filtrado=rows.filter(function(r){return r[4]==='Entrada'&&(r[7]!=='SI'||r[8]!=='SI');});
+  if(!filtrado.length){document.getElementById('tbl-rep-epp').innerHTML='<tr><td colspan="6" class="loading">Sin novedades de EPP en el periodo</td></tr>';return;}
+  var html='';
+  filtrado.forEach(function(r){
+    var epp=r[7]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">Falta EPP</span>';
+    var nov=r[8]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-orange">Con novedad</span>';
+    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+epp+'</td><td>'+nov+'</td></tr>';
+  });
+  document.getElementById('tbl-rep-epp').innerHTML=html;
+}
+
+function renderRepAtrasos(rows){
+  var JORNADA_INICIO=8*60;
+  function toMins(t){if(!t)return 0;var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+  var porEmp={};
+  rows.forEach(function(r){
+    if(r[4]!=='Entrada')return;
+    var key=r[1]+'|'+r[2]+'|'+r[3];
+    if(!porEmp[key])porEmp[key]={cedula:r[1],nombre:r[2],obra:r[3],diasAtraso:0,totalMin:0};
+    var eMin=toMins(r[5]);
+    var atraso=Math.max(0,eMin-JORNADA_INICIO);
+    if(atraso>0){porEmp[key].diasAtraso++;porEmp[key].totalMin+=atraso;}
+  });
+  var lista=Object.keys(porEmp).map(function(k){return porEmp[k];}).filter(function(e){return e.totalMin>0;});
+  lista.sort(function(a,b){return b.totalMin-a.totalMin;});
+  if(!lista.length){document.getElementById('tbl-rep-atrasos').innerHTML='<tr><td colspan="6" class="loading">Sin atrasos en el periodo</td></tr>';return;}
+  var html='';
+  lista.forEach(function(e,i){
+    html+='<tr><td>'+(i+1)+'</td><td>'+e.cedula+'</td><td><strong>'+e.nombre+'</strong></td><td>'+e.obra+'</td><td>'+e.diasAtraso+'</td><td>'+e.totalMin+'</td></tr>';
+  });
+  document.getElementById('tbl-rep-atrasos').innerHTML=html;
+}
 function exportarMes(){
   var mes=document.getElementById('exp-mes').value;
   var anio=document.getElementById('exp-anio').value;
@@ -457,6 +601,7 @@ function exportarHoras(){
   var mes=document.getElementById('exp-mes-horas').value;
   var anio=document.getElementById('exp-anio-horas').value;
   var prefix=anio+'-'+mes;
+  var JORNADA_INICIO=8*60,JORNADA_FIN=17*60;
   obtenerTodosRegistros(function(rows){
     var filtrado=rows.filter(function(r){return String(r[0]).startsWith(prefix);});
     if(!filtrado.length){alert('Sin registros para ese mes');return;}
@@ -465,29 +610,37 @@ function exportarHoras(){
       var key=r[1]+'|'+r[2];
       if(!empleados[key])empleados[key]={cedula:r[1],nombre:r[2],obra:r[3],dias:{}};
       var dia=r[0];
-      if(!empleados[key].dias[dia])empleados[key].dias[dia]={E:'',A:'',R:'',S:''};
+      if(!empleados[key].dias[dia])empleados[key].dias[dia]={E:'',A:'',R:'',S:'',autorizada:''};
       var evt=r[4];
       if(evt==='Entrada')empleados[key].dias[dia].E=r[5];
       if(evt==='Almuerzo')empleados[key].dias[dia].A=r[5];
       if(evt==='Regreso')empleados[key].dias[dia].R=r[5];
-      if(evt==='Salida')empleados[key].dias[dia].S=r[5];
+      if(evt==='Salida'){empleados[key].dias[dia].S=r[5];empleados[key].dias[dia].autorizada=r[9]||'-';}
     });
     function toMins(t){if(!t)return 0;var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
     var resumen=[];
     Object.keys(empleados).forEach(function(k){
       var emp=empleados[k];
-      var totalMins=0,extraMins=0,diasTrab=0;
+      var totalMins=0,extraMins=0,atrasoMins=0,diasTrab=0;
       Object.keys(emp.dias).forEach(function(dia){
         var d=emp.dias[dia];
         if(d.E&&d.S){
-          var mins=toMins(d.S)-toMins(d.E);
+          var eMin=toMins(d.E),sMin=toMins(d.S);
+          var atraso=Math.max(0,eMin-JORNADA_INICIO);
+          var eEfectivo=Math.max(eMin,JORNADA_INICIO);
+          var sEfectivo=sMin,extra=0;
+          if(sMin>JORNADA_FIN){
+            if(d.autorizada==='AUTORIZADA'){sEfectivo=sMin;extra=sMin-JORNADA_FIN;}
+            else{sEfectivo=JORNADA_FIN;}
+          }
+          var mins=sEfectivo-eEfectivo;
           if(d.A&&d.R)mins-=(toMins(d.R)-toMins(d.A));
-          if(mins>0){totalMins+=mins;if(mins>480)extraMins+=(mins-480);diasTrab++;}
+          if(mins>0){totalMins+=mins;extraMins+=extra;atrasoMins+=atraso;diasTrab++;}
         }
       });
-      resumen.push([emp.cedula,emp.nombre,emp.obra,diasTrab,Math.round(totalMins/60*10)/10,Math.round(extraMins/60*10)/10]);
+      resumen.push([emp.cedula,emp.nombre,emp.obra,diasTrab,Math.round(totalMins/60*10)/10,Math.round(extraMins/60*10)/10,atrasoMins]);
     });
-    descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Horas Trabajadas','Horas Extra'],resumen),'IACONTROL_Horas_'+prefix+'.csv');
+    descargarCSV(toCSV(['Cedula','Nombre','Obra','Dias Trabajados','Horas Trabajadas','Horas Extra Autorizadas','Atraso Total (min)'],resumen),'IACONTROL_Horas_'+prefix+'.csv');
   });
 }
 function abrirModalEmpleado(){
