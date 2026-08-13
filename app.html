@@ -376,7 +376,15 @@ function registrar(evt){
   var idx=FLUJO.indexOf(evt);var ultimo=FLUJO.filter(function(k){return registrosHoy[k];}).pop();var idxUlt=ultimo?FLUJO.indexOf(ultimo):-1;
   if(idx!==idxUlt+1){toast('Sigue el orden: Entrada - Almuerzo - Regreso - Salida');return;}
   if(evt==='E'){document.getElementById('aviso-epp').style.display='none';document.getElementById('modal-epp').classList.add('show');return;}
+  if(evt==='S'){
+    var n=new Date();var ahoraMin=n.getHours()*60+n.getMinutes();
+    if(ahoraMin>JORNADA_FIN_MIN){document.getElementById('modal-extra').classList.add('show');return;}
+  }
   ejecutarRegistro(evt,false,false);
+}
+function responderHorasExtra(autorizada){
+  document.getElementById('modal-extra').classList.remove('show');
+  ejecutarRegistro('S',false,false,autorizada);
 }
 function responderEPP(tiene){
   if(!tiene){document.getElementById('aviso-epp').style.display='block';return;}
@@ -400,7 +408,7 @@ function responderNovedad(tieneNovedad){
   ejecutarRegistro('E',true,true);
 }
 
-function ejecutarRegistro(evt,epp,sinNovedad){
+function ejecutarRegistro(evt,epp,sinNovedad,autorizada){
   spinner(true,'Verificando ubicacion...');
   verificarGPS(function(ok,dist){
     if(!ok){spinner(false);return;}
@@ -415,6 +423,7 @@ function ejecutarRegistro(evt,epp,sinNovedad){
       epp_confirmado:epp,
       sin_novedad:sinNovedad
     };
+    if(evt==='S'&&typeof autorizada!=='undefined')params.horas_extra_autorizada=autorizada;
     llamar(scriptUrl,params,function(resp){
       spinner(false);
       if(!resp||!resp.ok){
@@ -423,6 +432,7 @@ function ejecutarRegistro(evt,epp,sinNovedad){
       }
       var hora=resp.hora;
       registrosHoy[evt]=hora;if(epp)registrosHoy['epp']=hora;
+      if(evt==='S'&&typeof autorizada!=='undefined')registrosHoy['S_autorizada']=autorizada;
       guardarRegistrosLocales();renderDia();
       toast('Registrado: '+nombreEvt(evt)+' a las '+hora);
     });
@@ -444,12 +454,35 @@ function calcularHoras(){
   var E=registrosHoy['E'],A=registrosHoy['A'],R=registrosHoy['R'],S=registrosHoy['S'];
   if(!E||!S)return;
   function toMins(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-  var mins=toMins(S)-toMins(E);if(A&&R)mins-=(toMins(R)-toMins(A));
-  var hTrab=Math.round(mins/60*10)/10;var hExtra=Math.max(0,Math.round((mins-empleadoActual.jornadaHrs*60)/60*10)/10);
+
+  var eMin=toMins(E),sMin=toMins(S);
+  var atrasoMin=Math.max(0,eMin-JORNADA_INICIO_MIN);
+  var eEfectivo=Math.max(eMin,JORNADA_INICIO_MIN);
+
+  var autorizada=registrosHoy['S_autorizada'];
+  var sEfectivo,extraMin=0;
+  if(sMin>JORNADA_FIN_MIN){
+    if(autorizada===true){sEfectivo=sMin;extraMin=sMin-JORNADA_FIN_MIN;}
+    else{sEfectivo=JORNADA_FIN_MIN;}
+  } else {
+    sEfectivo=sMin;
+  }
+
+  var mins=sEfectivo-eEfectivo;
+  if(A&&R)mins-=(toMins(R)-toMins(A));
+
+  var hTrab=Math.round(mins/60*10)/10;
+  var hExtra=Math.round(extraMin/60*10)/10;
+
   document.getElementById('rv-horas').textContent=hTrab+' hrs';
+
   var rowExtra=document.getElementById('row-extra');
-  if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs';rowExtra.style.display='flex';}
+  if(hExtra>0){document.getElementById('rv-extra').textContent='+'+hExtra+' hrs (autorizadas)';rowExtra.style.display='flex';}
   else rowExtra.style.display='none';
+
+  var rowAtraso=document.getElementById('row-atraso');
+  if(atrasoMin>0){document.getElementById('rv-atraso').textContent='-'+atrasoMin+' min';rowAtraso.style.display='flex';}
+  else rowAtraso.style.display='none';
 }
 </script>
 </body>
