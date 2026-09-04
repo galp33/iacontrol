@@ -223,17 +223,22 @@ main{max-width:520px;margin:0 auto;padding:16px}
       <div class="modal-aviso av-red" id="aviso-epp">No puedes registrar tu entrada sin el EPP completo. Contacta a tu supervisor.</div>
     </div>
     <div class="modal-body" id="epp-body-construccion" style="display:none">
-      <div class="modal-ico">&#x1F9BA;</div>
-      <div class="modal-txt" style="margin-bottom:14px">Marca el equipo de proteccion personal (EPP) con el que cuentas hoy:</div>
-      <div style="text-align:left;margin-bottom:16px">
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Casco" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Casco</label>
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Guantes" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Guantes</label>
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Botas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Botas</label>
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Mascarilla" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Mascarilla</label>
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Pantalon" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Pantalon</label>
-        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Gafas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Gafas de proteccion</label>
-        <label style="display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-weight:700;font-size:.9rem"><input type="checkbox" id="epp-todos" onchange="marcarTodosEPP(this)" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Seleccionar todos</label>
-      </div>
+  <div class="modal-ico">&#x1F9BA;</div>
+  <div class="modal-txt" style="margin-bottom:10px">Marca el equipo de proteccion personal (EPP) con el que cuentas hoy:</div>
+  <button type="button" onclick="confirmarEPPOficina()" style="width:100%;padding:10px;margin-bottom:14px;background:var(--blue-l);color:var(--blue);border:2px solid var(--blue);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer">Soy de Oficina - EPP completo</button>
+  <div style="text-align:left;margin-bottom:16px">
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Casco" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Casco</label>
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Guantes" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Guantes</label>
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Botas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Botas</label>
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Mascarilla" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Mascarilla</label>
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Pantalon" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Pantalon</label>
+    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Gafas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Gafas de proteccion</label>
+    <label style="display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-weight:700;font-size:.9rem"><input type="checkbox" id="epp-todos" onchange="marcarTodosEPP(this)" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Seleccionar todos</label>
+  </div>
+  <div class="modal-btns">
+    <button class="btn-si" onclick="confirmarEPPConstruccion()">Confirmar</button>
+  </div>
+</div>
       <div class="modal-btns">
         <button class="btn-si" onclick="confirmarEPPConstruccion()">Confirmar</button>
         <button class="btn-no" onclick="responderEPP(false)">No tengo el EPP completo</button>
@@ -422,19 +427,27 @@ function responderHorasExtra(autorizada){
   document.getElementById('modal-extra').classList.remove('show');
   ejecutarRegistro('S',false,false,autorizada);
 }
+var EPP_ITEMS_TOTAL=['Casco','Guantes','Botas','Mascarilla','Pantalon','Gafas'];
 function marcarTodosEPP(chk){
   document.querySelectorAll('.epp-item').forEach(function(c){c.checked=chk.checked;});
 }
-function confirmarEPPConstruccion(){
-  var marcados=[];
-  document.querySelectorAll('.epp-item:checked').forEach(function(c){marcados.push(c.value);});
-  if(marcados.length===0){document.getElementById('aviso-epp-construccion').style.display='block';return;}
-  document.getElementById('aviso-epp-construccion').style.display='none';
-  window.eppDetalle=marcados.join(', ');
+function avanzarNovedad(){
   document.getElementById('modal-epp').classList.remove('show');
   document.getElementById('aviso-novedad').style.display='none';
   document.getElementById('rrhh-box').style.display='none';
   document.getElementById('modal-novedad').classList.add('show');
+}
+function confirmarEPPOficina(){
+  window.eppDetalle='Oficina - EPP completo';
+  window.eppCompleto=true;
+  avanzarNovedad();
+}
+function confirmarEPPConstruccion(){
+  var marcados=[];
+  document.querySelectorAll('.epp-item:checked').forEach(function(c){marcados.push(c.value);});
+  window.eppCompleto=(marcados.length===EPP_ITEMS_TOTAL.length);
+  window.eppDetalle=(marcados.length?marcados.join(', '):'Ninguno')+(window.eppCompleto?'':' - INCOMPLETO');
+  avanzarNovedad();
 }
 function responderNovedad(tieneNovedad){
   if(tieneNovedad){
