@@ -150,7 +150,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
         </div>
         <div style="overflow-x:auto">
           <table class="tbl">
-            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Cedula</th><th>Nombre</th><th>Obra</th><th>Evento</th><th>Hora</th><th>GPS</th><th>EPP</th><th>Sin Novedad</th><th>EPP Detalle</th></tr></thead>
             <tbody id="tbl-registros"><tr><td colspan="9" class="loading"><span class="spinner-sm"></span>Cargando...</td></tr></tbody>
           </table>
         </div>
@@ -408,7 +408,9 @@ function renderRegistros(rows){
     var evtB=evt==='Entrada'?'<span class="badge badge-green">'+evt+'</span>':evt==='Almuerzo'?'<span class="badge badge-orange">'+evt+'</span>':evt==='Regreso'?'<span class="badge badge-blue">'+evt+'</span>':'<span class="badge badge-red">'+evt+'</span>';
     var epp=r[7]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
     var nov=r[8]==='SI'?'<span class="badge badge-green">SI</span>':'<span class="badge badge-red">-</span>';
-    html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td></tr>';
+    var eppDet=r[10]||'-';
+var eppDetB=eppDet.indexOf('INCOMPLETO')>-1?'<span class="badge badge-orange">'+eppDet+'</span>':eppDet;
+html+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><strong>'+r[2]+'</strong></td><td>'+r[3]+'</td><td>'+evtB+'</td><td><strong>'+r[5]+'</strong></td><td>'+r[6]+'</td><td>'+epp+'</td><td>'+nov+'</td><td>'+eppDetB+'</td></tr>';
   });
   document.getElementById('tbl-registros').innerHTML=html;
 }
@@ -434,7 +436,7 @@ function cargarEmpleados(){
   });
 }
 function renderEmpleados(rows){
-  if(!rows.length){document.getElementById('tbl-empleados').innerHTML='<tr><td colspan="7" class="loading">Sin empleados</td></tr>';return;}
+  if(!rows.length){document.getElementById('tbl-registros').innerHTML='<tr><td colspan="10" class="loading">Sin registros</td></tr>';return;}
   var html='';
   rows.forEach(function(r,i){
     html+='<tr><td>'+r[0]+'</td><td><strong>'+r[1]+'</strong></td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'-'+r[5]+'</td><td>'+r[6]+' hrs</td>';
