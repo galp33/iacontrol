@@ -478,6 +478,7 @@ function ejecutarRegistro(evt,epp,sinNovedad,autorizada){
       distancia_m:Math.round(dist),
       epp_confirmado:epp,
 epp_detalle:(window.eppDetalle||''),
+epp_completo:(typeof window.eppCompleto!=='undefined'?window.eppCompleto:''),
       sin_novedad:sinNovedad
     };
     if(evt==='S'&&typeof autorizada!=='undefined')params.horas_extra_autorizada=autorizada;
