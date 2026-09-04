@@ -216,28 +216,27 @@ main{max-width:520px;margin:0 auto;padding:16px}
     <div class="modal-body" id="epp-body-general">
       <div class="modal-ico">&#x1F9BA;</div>
       <div class="modal-txt">Confirmo que cuento con <strong>todos los equipos de proteccion personal (EPP)</strong> necesarios y en buen estado para realizar mi trabajo de forma segura.</div>
-       <div class="modal-aviso av-red" id="aviso-epp">No puedes registrar tu entrada sin el EPP completo. Contacta a tu supervisor.</div>
+      <div class="modal-btns">
+        <button class="btn-si" onclick="responderEPP(true)">Si - tengo todo el EPP</button>
+        <button class="btn-no" onclick="responderEPP(false)">No tengo todo el EPP</button>
+      </div>
+      <div class="modal-aviso av-red" id="aviso-epp">No puedes registrar tu entrada sin el EPP completo. Contacta a tu supervisor.</div>
     </div>
     <div class="modal-body" id="epp-body-construccion" style="display:none">
-  <div class="modal-ico">&#x1F9BA;</div>
-  <div class="modal-txt" style="margin-bottom:10px">Marca el equipo de proteccion personal (EPP) con el que cuentas hoy:</div>
-  <button type="button" onclick="confirmarEPPOficina()" style="width:100%;padding:10px;margin-bottom:14px;background:var(--blue-l);color:var(--blue);border:2px solid var(--blue);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer">Soy de Oficina - EPP completo</button>
-  <div style="text-align:left;margin-bottom:16px">
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Casco" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Casco</label>
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Guantes" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Guantes</label>
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Botas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Botas</label>
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Mascarilla" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Mascarilla</label>
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Pantalon" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Pantalon</label>
-    <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Gafas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Gafas de proteccion</label>
-    <label style="display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-weight:700;font-size:.9rem"><input type="checkbox" id="epp-todos" onchange="marcarTodosEPP(this)" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Seleccionar todos</label>
-  </div>
-  <div class="modal-btns">
-    <button class="btn-si" onclick="confirmarEPPConstruccion()">Confirmar</button>
-  </div>
-</div>
+      <div class="modal-ico">&#x1F9BA;</div>
+      <div class="modal-txt" style="margin-bottom:10px">Marca el equipo de proteccion personal (EPP) con el que cuentas hoy:</div>
+      <button type="button" onclick="confirmarEPPOficina()" style="width:100%;padding:10px;margin-bottom:14px;background:var(--blue-l);color:var(--blue);border:2px solid var(--blue);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer">Soy de Oficina - EPP completo</button>
+      <div style="text-align:left;margin-bottom:16px">
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Casco" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Casco</label>
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Guantes" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Guantes</label>
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Botas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Botas</label>
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Mascarilla" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Mascarilla</label>
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Pantalon" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Pantalon</label>
+        <label style="display:block;margin-bottom:10px;font-size:.9rem"><input type="checkbox" class="epp-item" value="Gafas" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Gafas de proteccion</label>
+        <label style="display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-weight:700;font-size:.9rem"><input type="checkbox" id="epp-todos" onchange="marcarTodosEPP(this)" style="margin-right:8px;width:18px;height:18px;vertical-align:middle"> Seleccionar todos</label>
+      </div>
       <div class="modal-btns">
         <button class="btn-si" onclick="confirmarEPPConstruccion()">Confirmar</button>
-        <button class="btn-no" onclick="responderEPP(false)">No tengo el EPP completo</button>
       </div>
       <div class="modal-aviso av-red" id="aviso-epp-construccion">Debes marcar al menos un equipo, o indicar que no tienes el EPP completo.</div>
     </div>
