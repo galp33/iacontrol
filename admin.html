@@ -329,6 +329,7 @@ header{background:var(--navy2);position:sticky;top:0;z-index:100}
 </div>
 <script>
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyaqaI10tnGtfo4ZtfD4ADRMxziBBNR4neadIxX2m8tKcO1E-2L3S8cfHfwDGeLaGJK/exec';
+ var API_TOKEN='66036E574c@$@%';
 var PASS_ADMIN='0000',clienteId='',scriptUrl='';
 var datosRegistros=[],datosEmpleados=[],datosObras=[];
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
@@ -670,7 +671,7 @@ function guardarEmpleado(){
   var fin=document.getElementById('emp-turno-fin').value.trim();
   var jornada=document.getElementById('emp-jornada').value;
   if(!cedula||!nombre||!obra){alert('Completa: Cedula, Nombre y Obra.');return;}
-  llamar(scriptUrl,{accion:'addEmpleado',cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
+  llamar(scriptUrl,{accion:'addEmpleado,'token:API_TOKEN,cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
     if(data&&data.ok){cerrarModal('modal-empleado');cargarEmpleados();alert('Empleado guardado.');}
     else alert('Error al guardar.');
   });
@@ -685,20 +686,20 @@ function guardarObra(){
   var rrhhNom=document.getElementById('obra-rrhh-nom').value.trim();
   var rrhhTel=document.getElementById('obra-rrhh-tel').value.trim();
   if(!nombre||!lat||!lng){alert('Completa: Nombre, Latitud y Longitud.');return;}
-  llamar(scriptUrl,{accion:'addObra',nombre:nombre,dir:dir,lat:lat,lng:lng,radio:radio,activa:activa,rrhhNombre:rrhhNom,rrhhTel:rrhhTel},function(data){
+  llamar(scriptUrl,{accion:'addObra',token:API_TOKEN,nombre:nombre,dir:dir,lat:lat,lng:lng,radio:radio,activa:activa,rrhhNombre:rrhhNom,rrhhTel:rrhhTel},function(data){
     if(data&&data.ok){cerrarModal('modal-obra');cargarObras();alert('Obra guardada.');}
     else alert('Error al guardar.');
   });
 }
 function eliminarEmpleado(idx){
   if(!confirm('Eliminar este empleado?'))return;
-  llamar(scriptUrl,{accion:'delEmpleado',cedula:datosEmpleados[idx][0]},function(data){
+  llamar(scriptUrl,{accion:'delEmpleado',token:API_TOKEN,cedula:datosEmpleados[idx][0]},function(data){
     if(data&&data.ok)cargarEmpleados();else alert('Error al eliminar.');
   });
 }
 function eliminarObra(idx){
   if(!confirm('Eliminar esta obra?'))return;
-  llamar(scriptUrl,{accion:'delObra',nombre:datosObras[idx][0]},function(data){
+  llamar(scriptUrl,{accion:'delObra',token:API_TOKEN,nombre:datosObras[idx][0]},function(data){
     if(data&&data.ok)cargarObras();else alert('Error al eliminar.');
   });
 }
