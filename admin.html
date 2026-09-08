@@ -671,7 +671,7 @@ function guardarEmpleado(){
   var fin=document.getElementById('emp-turno-fin').value.trim();
   var jornada=document.getElementById('emp-jornada').value;
   if(!cedula||!nombre||!obra){alert('Completa: Cedula, Nombre y Obra.');return;}
-  llamar(scriptUrl,{accion:'addEmpleado,token:API_TOKEN,cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
+  llamar(scriptUrl,{accion:'addEmpleado',token:API_TOKEN,cedula:cedula,nombre:nombre,cargo:cargo,obra:obra,turnoInicio:ini,turnoFin:fin,jornadaHrs:jornada},function(data){
     if(data&&data.ok){cerrarModal('modal-empleado');cargarEmpleados();alert('Empleado guardado.');}
     else alert('Error al guardar.');
   });
