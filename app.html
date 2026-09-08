@@ -295,6 +295,7 @@ main{max-width:520px;margin:0 auto;padding:16px}
 <div id="jsonp-container" style="display:none"></div>
 <script>
 var CENTRAL_URL='https://script.google.com/macros/s/AKfycbyDYVvl-4yTxFsRQYKj_oE5VixIGYilSDS3mqzGRNzqXPAr6hXvVTZErQLjnc4n2KzF/exec';
+  var API_TOKEN='66036E574c@$@%';
 var clienteId='',scriptUrl='';
 (function(){var p=new URLSearchParams(window.location.search);clienteId=p.get('cliente')||'';})();
 var FLUJO=['E','A','R','S'];
@@ -464,9 +465,10 @@ function ejecutarRegistro(evt,epp,sinNovedad,autorizada){
   verificarGPS(function(ok,dist){
     if(!ok){spinner(false);return;}
     spinner(true,'Registrando...');
-    var params={
-      accion:'registrar',
-      cedula:empleadoActual.cedula,
+   var params={
+  accion:'registrar',
+  token:API_TOKEN,
+  cedula:empleadoActual.cedula,
       nombre:empleadoActual.nombre,
       obra:empleadoActual.obra,
       evento:nombreEvt(evt),
