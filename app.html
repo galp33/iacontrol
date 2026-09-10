@@ -406,6 +406,7 @@ function confirmarPrivacidad(){
   localStorage.setItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula,fecha);
   window._privacidadFecha=fecha;
   document.getElementById('modal-privacidad').classList.remove('show');
+  llamar(scriptUrl,{accion:'aceptarPrivacidad',token:API_TOKEN,cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,version:'v1'},function(resp){});
 }
 function cerrarSesion(){
   empleadoActual=null;registrosHoy={};
