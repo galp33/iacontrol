@@ -385,13 +385,14 @@ function mostrarPanel(){
   document.getElementById('screen-panel').style.display='block';
   document.getElementById('p-nombre').textContent=empleadoActual.nombre;
   document.getElementById('p-meta').textContent=empleadoActual.cargo+' - '+empleadoActual.obra+' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
-  renderDia();verificarGPS();
+  renderDia();
   var yaAcepto=localStorage.getItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula);
   if(!yaAcepto){
     document.getElementById('chk-privacidad').checked=false;
     chkPrivacidadCambio();
     document.getElementById('modal-privacidad').classList.add('show');
   }
+  verificarGPS();
 }
   function chkPrivacidadCambio(){
   var chk=document.getElementById('chk-privacidad');
