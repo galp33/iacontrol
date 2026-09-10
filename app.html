@@ -290,6 +290,22 @@ main{max-width:520px;margin:0 auto;padding:16px}
     </div>
   </div>
 </div>
+  <div class="modal" id="modal-privacidad">
+  <div class="modal-box">
+    <div class="modal-head mh-navy">Aviso de Privacidad</div>
+    <div class="modal-body">
+      <div class="modal-ico">&#x1F512;</div>
+      <div class="modal-txt" style="margin-bottom:18px">IACONTROL registra tu ubicacion y hora al marcar entrada y salida. Esta informacion se usa unicamente para el control de asistencia y la asignacion de tareas/obra de tu empresa. No se comparte con terceros.</div>
+      <label style="display:flex;align-items:flex-start;gap:10px;text-align:left;margin-bottom:20px;font-size:.85rem;line-height:1.4">
+        <input type="checkbox" id="chk-privacidad" onchange="chkPrivacidadCambio()" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
+        <span>Autorizo expresamente el registro y envio de esta informacion a mi empresa.</span>
+      </label>
+      <div class="modal-btns">
+        <button class="btn-si" id="btn-continuar-privacidad" onclick="confirmarPrivacidad()" disabled style="opacity:.5">Continuar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="spinner"><div class="spin-ring"></div><div class="spin-txt" id="spin-txt">Verificando...</div></div>
 <div id="toast"></div>
 <div id="jsonp-container" style="display:none"></div>
@@ -370,6 +386,25 @@ function mostrarPanel(){
   document.getElementById('p-nombre').textContent=empleadoActual.nombre;
   document.getElementById('p-meta').textContent=empleadoActual.cargo+' - '+empleadoActual.obra+' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
   renderDia();verificarGPS();
+  var yaAcepto=localStorage.getItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula);
+  if(!yaAcepto){
+    document.getElementById('chk-privacidad').checked=false;
+    chkPrivacidadCambio();
+    document.getElementById('modal-privacidad').classList.add('show');
+  }
+}
+  function chkPrivacidadCambio(){
+  var chk=document.getElementById('chk-privacidad');
+  var btn=document.getElementById('btn-continuar-privacidad');
+  btn.disabled=!chk.checked;
+  btn.style.opacity=chk.checked?'1':'.5';
+}
+function confirmarPrivacidad(){
+  if(!document.getElementById('chk-privacidad').checked)return;
+  var fecha=new Date().toISOString();
+  localStorage.setItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula,fecha);
+  window._privacidadFecha=fecha;
+  document.getElementById('modal-privacidad').classList.remove('show');
 }
 function cerrarSesion(){
   empleadoActual=null;registrosHoy={};
