@@ -491,6 +491,7 @@ function responderNovedad(tieneNovedad){
       document.getElementById('rrhh-link').href='tel:'+empleadoActual.rrhhTel;
       document.getElementById('rrhh-box').style.display='block';
     }
+    llamar(scriptUrl,{accion:'registrarNovedad',token:API_TOKEN,cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,obra:empleadoActual.obra},function(resp){});
     return;
   }
   document.getElementById('modal-novedad').classList.remove('show');
