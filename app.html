@@ -92,7 +92,7 @@ main{max-width:520px;margin:0 auto;padding:16px}
 .res-total{margin-top:4px;padding-top:8px;border-top:2px solid var(--border);display:flex;justify-content:space-between;font-size:.9rem}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;align-items:center;justify-content:center;padding:20px}
 .modal.show{display:flex}
-.modal-box{background:#fff;border-radius:16px;width:100%;max-width:380px;overflow:hidden;text-align:center}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:380px;max-height:92vh;overflow-y:auto;text-align:center}
 .modal-head{padding:18px 20px;font-size:1rem;font-weight:700;line-height:1.3;color:#fff}
 .mh-navy{background:var(--navy)}
 .mh-red{background:var(--red)}
@@ -295,7 +295,7 @@ main{max-width:520px;margin:0 auto;padding:16px}
     <div class="modal-head mh-navy">Aviso de Privacidad</div>
     <div class="modal-body">
       <div class="modal-ico">&#x1F512;</div>
-      <div class="modal-txt" style="margin-bottom:18px">IACONTROL registra tu ubicacion y hora al marcar entrada y salida. Esta informacion se usa unicamente para el control de asistencia y la asignacion de tareas/obra de tu empresa. No se comparte con terceros.</div>
+      <div class="modal-txt" style="margin-bottom:18px">IACONTROL registra tu ubicacion y hora al marcar entrada y salida, las novedades, accidentes o problemas de salud que declares, y el uso de EPP. Esta informacion se usa unicamente para el control de asistencia y horas trabajadas, la asignacion de tareas/obra y el cumplimiento de la seguridad ocupacional de tu empresa. No se comparte con terceros.</div>
       <label style="display:flex;align-items:flex-start;gap:10px;text-align:left;margin-bottom:20px;font-size:.85rem;line-height:1.4">
         <input type="checkbox" id="chk-privacidad" onchange="chkPrivacidadCambio()" style="margin-top:3px;width:18px;height:18px;flex-shrink:0">
         <span>Autorizo expresamente el registro y envio de esta informacion a mi empresa.</span>
@@ -386,14 +386,17 @@ function mostrarPanel(){
   document.getElementById('p-nombre').textContent=empleadoActual.nombre;
   document.getElementById('p-meta').textContent=empleadoActual.cargo+' - '+empleadoActual.obra+' - '+empleadoActual.turnoInicio+'-'+empleadoActual.turnoFin;
   renderDia();
-  var yaAcepto=localStorage.getItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula);
+  var yaAcepto=localStorage.getItem(privKey());
   if(!yaAcepto){
     document.getElementById('chk-privacidad').checked=false;
     chkPrivacidadCambio();
     document.getElementById('modal-privacidad').classList.add('show');
+    return; // el GPS se pide despues de aceptar el aviso
   }
   verificarGPS();
 }
+var PRIVACIDAD_VERSION='v2';
+function privKey(){return 'iac_privacidad_'+PRIVACIDAD_VERSION+'_'+clienteId+'_'+empleadoActual.cedula;}
   function chkPrivacidadCambio(){
   var chk=document.getElementById('chk-privacidad');
   var btn=document.getElementById('btn-continuar-privacidad');
@@ -403,10 +406,11 @@ function mostrarPanel(){
 function confirmarPrivacidad(){
   if(!document.getElementById('chk-privacidad').checked)return;
   var fecha=new Date().toISOString();
-  localStorage.setItem('iac_privacidad_'+clienteId+'_'+empleadoActual.cedula,fecha);
+  localStorage.setItem(privKey(),fecha);
   window._privacidadFecha=fecha;
   document.getElementById('modal-privacidad').classList.remove('show');
-  llamar(scriptUrl,{accion:'aceptarPrivacidad',token:API_TOKEN,cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,version:'v1'},function(resp){});
+  llamar(scriptUrl,{accion:'aceptarPrivacidad',token:API_TOKEN,cedula:empleadoActual.cedula,nombre:empleadoActual.nombre,version:PRIVACIDAD_VERSION},function(resp){});
+  verificarGPS();
 }
 function cerrarSesion(){
   empleadoActual=null;registrosHoy={};
