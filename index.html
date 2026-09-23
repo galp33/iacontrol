@@ -3,7 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IACONTROL — Control de asistencia para equipos en cualquier sector</title>
+<title>IACONTROL — Asistencia, EPP y seguridad ocupacional para equipos en cualquier sector</title>
+<meta name="description" content="Registro de asistencia desde el celular, con checklist de EPP y declaración de novedades y salud antes de iniciar la jornada. Desde $29.50 + IVA al mes, sin contrato.">
+<link rel="canonical" href="https://iacontrolpro.com/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_EC">
+<meta property="og:site_name" content="IACONTROL">
+<meta property="og:url" content="https://iacontrolpro.com/">
+<meta property="og:title" content="IACONTROL — Asistencia, EPP y seguridad ocupacional desde el celular">
+<meta property="og:description" content="Registro de asistencia con GPS, checklist de EPP y declaración de novedades antes de iniciar la jornada. Desde $29.50 + IVA al mes, sin contrato.">
+<meta property="og:image" content="https://iacontrolpro.com/iacontrol-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="IACONTROL — Asistencia, EPP y seguridad ocupacional desde el celular">
+<meta name="twitter:description" content="Registro de asistencia con GPS, checklist de EPP y declaración de novedades. Desde $29.50 + IVA al mes, sin contrato.">
+<meta name="twitter:image" content="https://iacontrolpro.com/iacontrol-og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "IACONTROL",
+  "url": "https://iacontrolpro.com/",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web (navegador del celular)",
+  "inLanguage": "es",
+  "description": "Control de asistencia con validación GPS por ubicación, checklist de EPP y declaración de novedades y salud antes de iniciar la jornada. Sin instalar aplicación.",
+  "offers": {
+    "@type": "Offer",
+    "price": "29.50",
+    "priceCurrency": "USD",
+    "description": "Desde $29.50 + IVA al mes por empresa, sin contrato."
+  }
+}
+</script>
 <link rel="icon" type="image/png" sizes="32x32" href="iacontrol-favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="iacontrol-favicon-192.png">
 <link rel="apple-touch-icon" href="iacontrol-favicon-192.png">
@@ -71,6 +104,7 @@
   .btn-ghost:hover{border-color:var(--text-secondary);}
   .hero-stats{display:flex; gap:28px; font-family:var(--mono); font-size:13px; color:var(--text-dim);}
   .hero-stats b{display:block; font-family:var(--display); font-size:22px; color:var(--text-primary); font-weight:600;}
+  .proof{margin-top:18px; font-family:var(--mono); font-size:12px; color:var(--text-dim);}
 
   /* ---------- live ticker card ---------- */
   .ticker-card{background:var(--blueprint); border:1px solid var(--line-strong); border-radius:6px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.35);}
@@ -86,10 +120,13 @@
   .status-dot{width:8px; height:8px; border-radius:50%;}
   .status-in{background:var(--success);}
   .status-out{background:var(--amber);}
+  .status-warn{background:var(--amber);}
   .time{font-family:var(--mono); color:var(--text-dim); font-size:12px;}
   .who{color:var(--text-primary);}
   .where{color:var(--text-dim); font-size:12px;}
+  .who .where{display:block;}
   .tag{font-family:var(--mono); font-size:10px; letter-spacing:.06em; color:var(--text-dim);}
+  .tag.warn{color:var(--amber);}
 
   /* ---------- problem ---------- */
   section{padding:96px 0; border-bottom:1px solid var(--line);}
@@ -114,6 +151,32 @@
   .compare-row .ia{color:var(--text-primary); font-weight:500;}
   .compare-row .ia::before{content:"✓"; color:var(--success); margin-right:8px; font-weight:700;}
   .compare-row .bio::before{content:"–"; color:var(--text-dim); margin-right:8px;}
+
+  /* ---------- seguridad ocupacional ---------- */
+  .safety-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:64px; align-items:start;}
+  .safety-point{display:grid; grid-template-columns:104px 1fr; gap:20px; padding:26px 0; border-bottom:1px solid var(--line);}
+  .safety-point:first-child{padding-top:0;}
+  .safety-point:last-child{border-bottom:none;}
+  .safety-point .tagline{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); padding-top:3px;}
+  .safety-point h3{font-size:17px; margin-bottom:8px;}
+  .safety-point p{font-size:14px; color:var(--text-secondary);}
+  .safety-note{margin-top:44px; max-width:640px; font-family:var(--mono); font-size:12px; line-height:1.6; color:var(--text-dim);}
+  .phone-wrap{max-width:300px; margin:0 auto;}
+  .phone{background:#0A141C; border:1px solid var(--line-strong); border-radius:28px; padding:14px; box-shadow:0 30px 60px rgba(0,0,0,0.35);}
+  .phone-bar{font-family:var(--mono); font-size:11px; color:var(--text-dim); padding:4px 10px 12px;}
+  .phone-modal{background:#F4F6F5; border-radius:14px; overflow:hidden;}
+  .phone-modal-head{background:var(--accent); color:#0B1A24; font-family:var(--display); font-weight:700; font-size:15px; padding:14px 16px; text-align:center;}
+  .phone-modal-body{padding:20px 18px 22px; display:flex; flex-direction:column; gap:10px;}
+  .phone-modal-body p{color:#3C4C57; font-size:14px; text-align:center; margin:0 0 6px;}
+  .phone-modal-body p b{color:#14212B;}
+  .phone-btn{padding:12px; border-radius:8px; font-size:13.5px; font-weight:600; text-align:center;}
+  .phone-btn.ok{background:#1F7A4D; color:#FFFFFF;}
+  .phone-btn.alt{border:1px solid #9FB3C0; color:#14212B;}
+  .phone-cap{text-align:center; font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-top:14px;}
+  @media(max-width:900px){
+    .safety-grid{grid-template-columns:1fr; gap:40px;}
+    .safety-point{grid-template-columns:1fr; gap:6px;}
+  }
 
   /* ---------- steps ---------- */
   .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:0;}
@@ -142,13 +205,20 @@
   .price-side h2{font-size:clamp(26px,3vw,36px); margin-bottom:16px;}
   .price-side p{color:var(--text-secondary); margin-bottom:14px; font-size:15px;}
   .price-card{background:var(--blueprint); border:1px solid var(--accent-dim); border-radius:6px; padding:36px; position:relative;}
-  .price-card::before{content:"Precio de enganche"; position:absolute; top:-12px; left:32px; background:var(--accent); color:#0B1A24; font-family:var(--mono); font-size:11px; font-weight:600; padding:4px 10px; border-radius:2px;}
+  .price-card::before{content:"Sin contrato"; position:absolute; top:-12px; left:32px; background:var(--accent); color:#0B1A24; font-family:var(--mono); font-size:11px; font-weight:600; padding:4px 10px; border-radius:2px;}
   .price-amount{font-family:var(--display); font-size:40px; font-weight:700; margin-bottom:22px; margin-top:6px;}
   .price-amount span{display:block; font-family:var(--body); font-size:14px; font-weight:400; color:var(--text-secondary); margin-top:4px;}
   .price-list{display:flex; flex-direction:column; gap:11px; margin-bottom:28px; font-size:14px;}
   .price-list div::before{content:"✓"; color:var(--success); margin-right:10px; font-weight:700;}
   .price-card .btn{width:100%; justify-content:center;}
   @media(max-width:900px){.price-wrap{grid-template-columns:1fr;}}
+
+  /* ---------- faq ---------- */
+  .faq-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 56px;}
+  .faq-item{padding:22px 0; border-top:1px solid var(--line);}
+  .faq-item h3{font-size:16px; margin-bottom:8px;}
+  .faq-item p{font-size:14px; color:var(--text-secondary);}
+  @media(max-width:900px){.faq-grid{grid-template-columns:1fr;}}
 
   /* ---------- cta final ---------- */
   .cta-final{text-align:center; padding:100px 0; background: radial-gradient(ellipse at center, rgba(255,90,31,0.09), transparent 65%);}
@@ -175,10 +245,11 @@
     <div class="nav-links">
       <a href="#producto">Producto</a>
       <a href="#comparacion">Vs. biométrico</a>
+      <a href="#seguridad">Seguridad</a>
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#precio">Precio</a>
     </div>
-    <a class="nav-cta" href="#contacto">Solicitar acceso →</a>
+    <a class="nav-cta" href="#contacto">Solicitar demo →</a>
   </nav>
 </header>
 
@@ -186,23 +257,24 @@
   <div class="grid-bg"></div>
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">Control de asistencia · cualquier sector</div>
-      <h1>Cada entrada y salida, <span class="accent">registrada al segundo.</span></h1>
-      <p class="lead">IACONTROL reemplaza el papel, el Excel y el grupo de WhatsApp por un registro de asistencia con hora exacta, ubicación asignada y reportes listos para nómina — desde el celular de cada empleado, sin hardware que instalar.</p>
+      <div class="eyebrow">Asistencia · EPP · seguridad ocupacional</div>
+      <h1>Cada jornada empieza registrada: <span class="accent">asistencia, EPP y novedades.</span></h1>
+      <p class="lead">IACONTROL reemplaza el papel, el Excel y el grupo de WhatsApp: hora exacta, ubicación asignada y reportes listos para nómina. Antes de iniciar, cada trabajador confirma su EPP cuando su puesto lo requiere y declara si tiene alguna novedad, accidente o malestar — desde su celular, sin hardware que instalar.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="#contacto">Solicitar contrato</a>
+        <a class="btn btn-primary" href="#contacto">Solicitar demo</a>
         <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
       </div>
       <div class="hero-stats">
         <div><b>Sin riesgo</b>prueba gratis</div>
         <div><b>~15 min</b>activación por empresa</div>
-        <div><b>∞</b>empleados incluidos</div>
+        <div><b>Sin contrato</b>cancelas cuando quieras</div>
       </div>
+      <p class="proof">Usado por empresas de varios mercados y afinado a sus necesidades.</p>
     </div>
     <div class="ticker-card reveal">
       <div class="ticker-head">
-        <span>REGISTRO EN VIVO</span>
-        <span class="live"><span class="live-dot"></span>ACTIVO</span>
+        <span>REGISTRO DE EJEMPLO</span>
+        <span class="live"><span class="live-dot"></span>DEMO</span>
       </div>
       <div class="ticker-body">
         <div class="ticker-track" id="ticker"></div>
@@ -243,7 +315,7 @@
     <div class="section-head reveal">
       <div class="eyebrow">Biométrico vs. IACONTROL</div>
       <h2>El biométrico resuelve identidad. No resuelve dónde ni cuándo.</h2>
-      <p>Un lector de huella confirma que la persona correcta usó el equipo. No confirma que esté en la ubicación a la que fue asignada, y requiere hardware fijo en cada ubicación.</p>
+      <p>Un lector de huella confirma que la persona correcta usó el equipo. No confirma que esté en la ubicación a la que fue asignada, no registra si trae su EPP ni si está en condiciones de trabajar, y requiere hardware fijo en cada ubicación.</p>
     </div>
     <div class="compare-table reveal">
       <div class="compare-row head">
@@ -259,7 +331,7 @@
       <div class="compare-row">
         <div class="label">Confirma ubicación/turno asignado</div>
         <div class="bio">No confirma</div>
-        <div class="ia">Sí, por diseño</div>
+        <div class="ia">Sí, con geocerca por ubicación</div>
       </div>
       <div class="compare-row">
         <div class="label">Filas y tiempos de espera</div>
@@ -274,9 +346,69 @@
       <div class="compare-row">
         <div class="label">Costo de escalar a una sede nueva</div>
         <div class="bio">Comprar equipo nuevo</div>
-        <div class="ia">Incluido en el contrato</div>
+        <div class="ia">Incluido en el precio mensual</div>
+      </div>
+      <div class="compare-row">
+        <div class="label">Verifica EPP antes de iniciar</div>
+        <div class="bio">No lo captura</div>
+        <div class="ia">Checklist de EPP al marcar</div>
+      </div>
+      <div class="compare-row">
+        <div class="label">Novedades, accidentes y salud</div>
+        <div class="bio">No lo captura</div>
+        <div class="ia">Declaración antes de la jornada</div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="seguridad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">EPP y seguridad ocupacional</div>
+      <h2>Un trabajador enfermo o sin EPP no debería empezar la jornada sin que nadie lo sepa.</h2>
+      <p>El mismo toque que registra la asistencia le pide al trabajador dos declaraciones antes de iniciar. El papel y el lector biométrico no las capturan.</p>
+    </div>
+    <div class="safety-grid">
+      <div class="safety-points">
+        <div class="safety-point reveal">
+          <div class="tagline">EPP</div>
+          <div>
+            <h3>Checklist de EPP al marcar</h3>
+            <p>El trabajador confirma su equipo de protección antes de entrar, para los puestos que lo requieren. Si algo falta, el registro queda marcado como incompleto, sin frenar su marcado de asistencia, y aparece en el reporte de EPP del gerente.</p>
+          </div>
+        </div>
+        <div class="safety-point reveal">
+          <div class="tagline">Novedades</div>
+          <div>
+            <h3>Declaración de novedades y accidentes</h3>
+            <p>Antes de iniciar la jornada responde una sola pregunta: ¿tienes alguna novedad, accidente o siniestro que reportar? Lo declarado queda en el panel de la empresa.</p>
+          </div>
+        </div>
+        <div class="safety-point reveal">
+          <div class="tagline">Salud</div>
+          <div>
+            <h3>Si está enfermo, avisa antes de ir a trabajar</h3>
+            <p>Gripe, malestar o síntomas de virus: el trabajador lo reporta desde su celular y gerencia evalúa el permiso de ausencia, en lugar de exponer al resto del equipo.</p>
+          </div>
+        </div>
+      </div>
+      <div class="phone-wrap reveal">
+        <div class="phone" aria-hidden="true">
+          <div class="phone-bar">iacontrolpro.com</div>
+          <div class="phone-modal">
+            <div class="phone-modal-head">Declaración de novedades</div>
+            <div class="phone-modal-body">
+              <p>Antes de iniciar tu jornada, ¿tienes alguna <b>novedad, accidente o siniestro</b> que reportar?</p>
+              <div class="phone-btn ok">No, sin novedades</div>
+              <div class="phone-btn alt">Sí, tengo una novedad</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-cap">Pantalla que ve el trabajador antes de iniciar</div>
+      </div>
+    </div>
+    <p class="safety-note">Lo que el trabajador declara se usa únicamente para el control de asistencia y horas trabajadas y el cumplimiento de la seguridad ocupacional de su empresa. No se comparte con terceros.</p>
   </div>
 </section>
 
@@ -296,17 +428,17 @@
       <div class="step reveal">
         <div class="n">02</div>
         <h3>Marca entrada/salida</h3>
-        <p>Un toque registra hora exacta y la ubicación o turno asignado, sin instalar nada.</p>
+        <p>Un toque registra la hora exacta y valida por GPS que está en la ubicación asignada. Antes de iniciar, declara su EPP y cualquier novedad.</p>
       </div>
       <div class="step reveal">
         <div class="n">03</div>
         <h3>Panel de administración</h3>
-        <p>El gerente ve el registro de todo el equipo en tiempo real, desde un acceso separado.</p>
+        <p>El gerente ve el registro de todo el equipo en tiempo real, desde un acceso separado con la contraseña propia de su empresa.</p>
       </div>
       <div class="step reveal">
         <div class="n">04</div>
         <h3>Reporte para nómina</h3>
-        <p>Exporta el consolidado del periodo, listo para procesar el pago sin digitar nada a mano.</p>
+        <p>Exporta a Excel por mes o por rango de fechas, con horas trabajadas y extras por empleado.</p>
       </div>
     </div>
   </div>
@@ -321,15 +453,15 @@
     <div class="features">
       <div class="feature reveal">
         <h3>Registros en tiempo real</h3>
-        <p>Cada entrada y salida aparece en el panel al instante, con hora exacta y ubicación asignada.</p>
+        <p>Cada marcado aparece al instante. Ves el total del día, el porcentaje con EPP confirmado y el porcentaje sin novedades, con una tabla filtrable por fecha, ubicación y nombre.</p>
       </div>
       <div class="feature reveal">
-        <h3>Exportación para nómina</h3>
-        <p>Descarga el reporte del periodo listo para pasar a tu proceso de pago, sin recalcular a mano.</p>
+        <h3>Exportación a Excel</h3>
+        <p>Descarga los registros de un mes, de un rango de fechas, o el reporte de horas trabajadas y extras por empleado.</p>
       </div>
       <div class="feature reveal">
         <h3>Gestión de empleados y ubicaciones</h3>
-        <p>Agrega o retira personal y sedes sin límite — el precio mensual no cambia por el tamaño del equipo.</p>
+        <p>Da de alta empleados con cédula, cargo, ubicación, turno y jornada. Registra ubicaciones con dirección, coordenadas, radio GPS y contacto de RRHH, sin límite de sedes.</p>
       </div>
       <div class="feature reveal">
         <h3>Sin instalación para el empleado</h3>
@@ -337,11 +469,23 @@
       </div>
       <div class="feature reveal">
         <h3>Panel de administrador</h3>
-        <p>Vista separada para gerencia, con acceso independiente al de los empleados.</p>
+        <p>Vista separada para gerencia, con contraseña propia de cada empresa e independiente del acceso de los empleados.</p>
       </div>
       <div class="feature reveal">
-        <h3>Activación rápida</h3>
-        <p>Una empresa nueva queda operativa en alrededor de 15 minutos desde que se confirma el contrato.</p>
+        <h3>Geocerca por ubicación</h3>
+        <p>Cada ubicación tiene sus coordenadas GPS y un radio que tú configuras. Al marcar, el sistema valida que el trabajador esté dentro de ese radio.</p>
+      </div>
+      <div class="feature reveal">
+        <h3>Reportes de EPP y novedades</h3>
+        <p>Ve quién marcó con EPP incompleto y qué novedades se declararon, junto con asistencia por ubicación e inconsistencias.</p>
+      </div>
+      <div class="feature reveal">
+        <h3>Horas extra con autorización</h3>
+        <p>Al marcar salida fuera del horario fijo, queda registrado si la hora extra fue autorizada o no.</p>
+      </div>
+      <div class="feature reveal">
+        <h3>Atrasos detectados solos</h3>
+        <p>Con el horario de trabajo definido, los atrasos se detectan automáticamente y se resumen en un ranking.</p>
       </div>
     </div>
   </div>
@@ -361,21 +505,65 @@
   <div class="wrap price-wrap">
     <div class="price-side reveal">
       <div class="eyebrow">Precio</div>
-      <h2>Empieza desde $29.50 + IVA al mes.</h2>
-      <p>No cobramos por número de trabajadores ni por sede activa. Un solo precio mensual por empresa, para que el crecimiento de tu equipo nunca sea una razón para dejar de controlar la asistencia.</p>
-      <p>La activación de una empresa nueva toma alrededor de 15 minutos desde que se confirma el contrato.</p>
+      <h2>Desde $29.50 + IVA al mes. Sin contrato.</h2>
+      <p>Un precio mensual por empresa, sin costo de instalación ni permanencia mínima. Si dejas de necesitarlo, cancelas y ya.</p>
+      <p>La activación de una empresa nueva toma alrededor de 15 minutos.</p>
     </div>
     <div class="price-card reveal">
-      <div class="price-amount">$29.50<span>+ IVA / mes, por empresa — precio de enganche</span></div>
+      <div class="price-amount">Desde $29.50<span>+ IVA / mes, por empresa. Sin contrato.</span></div>
       <div class="price-list">
-        <div>Empleados ilimitados</div>
-        <div>Ubicaciones y turnos ilimitados</div>
+        <div>Ubicaciones y turnos sin límite</div>
+        <div>Geocerca por ubicación con radio configurable</div>
+        <div>Checklist de EPP y declaración de novedades</div>
         <div>Panel de administración incluido</div>
-        <div>Exportación de reportes para nómina</div>
-        <div>URL propia de la empresa</div>
+        <div>Exportación a Excel: mes, rango de fechas y horas extra</div>
+        <div>URL propia y contraseña propia de la empresa</div>
       </div>
-      <a class="btn btn-primary" href="#contacto">Solicitar contrato</a>
+      <a class="btn btn-primary" href="#contacto">Solicitar demo</a>
       <div style="text-align:center; font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:14px;">Sin riesgo — pruébalo gratis antes de pagar</div>
+    </div>
+  </div>
+</section>
+
+<section id="preguntas">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Preguntas frecuentes</div>
+      <h2>Lo que suelen preguntar antes de activar.</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item reveal">
+        <h3>¿Rastrean al trabajador durante el día?</h3>
+        <p>No. La ubicación se toma solo cuando marca entrada y salida, en el punto asignado. No hay seguimiento continuo de posición.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿Cómo sabe el sistema que está en la ubicación asignada?</h3>
+        <p>Cada ubicación tiene coordenadas GPS y un radio que configura el administrador. Al marcar, el sistema valida que el celular esté dentro de ese radio.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿Qué pasa con la información de los trabajadores?</h3>
+        <p>Se usa únicamente para el control de asistencia y horas trabajadas y el cumplimiento de la seguridad ocupacional de la empresa. No se comparte con terceros.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿Necesito instalar algo en los celulares?</h3>
+        <p>No. Funciona desde el navegador con un enlace propio de tu empresa. El trabajador puede guardarlo como ícono en la pantalla de inicio, pero no hay app que descargar.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿Hay contrato o permanencia mínima?</h3>
+        <p>No. El servicio es mensual. Puedes cancelar cuando quieras, sin penalidades.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿En cuánto tiempo queda activo?</h3>
+        <p>En alrededor de 15 minutos. Nosotros configuramos la empresa, los enlaces y el panel; tú no necesitas hacer nada técnico.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿El precio incluye IVA?</h3>
+        <p>No. Los precios son más IVA. Emitimos factura formal en Ecuador.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3>¿Puedo probarlo antes de pagar?</h3>
+        <p>Sí. Armamos un entorno de demostración con tu propia ubicación, radio GPS y contacto de RRHH para que tu equipo lo pruebe. Si no encaja con tu operación, no pagas nada.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -384,7 +572,7 @@
   <div class="wrap">
     <div class="eyebrow" style="justify-content:center;">Siguiente paso</div>
     <h2>Activa el control de asistencia de tu empresa esta semana.</h2>
-    <p>Escríbenos con el nombre de tu empresa y el número aproximado de empleados. Te confirmamos el contrato y coordinamos la activación.</p>
+    <p>Escríbenos con el nombre de tu empresa y el número aproximado de empleados. Armamos un entorno de demostración con tu propia ubicación, radio GPS y contacto de RRHH para que tu equipo lo pruebe antes de decidir.</p>
     <a class="btn btn-primary" href="mailto:contacto@iacontrolpro.com?subject=Quiero%20activar%20IACONTROL">Solicitar demo</a>
   </div>
 </section>
@@ -392,7 +580,7 @@
 <footer>
   <div class="wrap footer-row">
    <div class="logo"><img src="iacontrol-icono-blanco.svg" alt="" style="width:20px;height:20px">IACONTROL</div>
-    <div class="fine">Sistema de control de asistencia para cualquier empresa con personal en varias ubicaciones. · contacto@iacontrolpro.com</div>
+    <div class="fine">Control de asistencia, EPP y seguridad ocupacional para empresas con personal en varias ubicaciones. · contacto@iacontrolpro.com</div>
   </div>
 </footer>
 
@@ -403,6 +591,15 @@
 
   function pad(n){ return n.toString().padStart(2,"0"); }
 
+  // Estado de cada marca de ejemplo: salida, entrada con EPP completo, o entrada con alerta
+  function estadoDeMarca(isIn){
+    if(!isIn) return { dot: "status-out", tag: "SALIDA", warn: false };
+    const r = Math.random();
+    if(r < 0.14) return { dot: "status-warn", tag: "NOVEDAD", warn: true };
+    if(r < 0.26) return { dot: "status-warn", tag: "EPP INCOMPLETO", warn: true };
+    return { dot: "status-in", tag: "ENTRADA · EPP ✓", warn: false };
+  }
+
   function buildEntries(count){
     let html = "";
     let h = 6, m = 45;
@@ -410,15 +607,15 @@
       m += Math.floor(Math.random()*7)+2;
       if(m>=60){ m-=60; h+=1; }
       const isIn = Math.random() > 0.4;
+      const estado = estadoDeMarca(isIn);
       const nombre = nombres[Math.floor(Math.random()*nombres.length)];
       const obra = obras[Math.floor(Math.random()*obras.length)];
       html += `
         <div class="entry">
-          <span class="status-dot ${isIn ? "status-in" : "status-out"}"></span>
+          <span class="status-dot ${estado.dot}"></span>
           <span class="time">${pad(h)}:${pad(m)}:${pad(Math.floor(Math.random()*60))}</span>
-          <span class="who">${nombre}</span>
-          <span class="where">${obra}</span>
-          <span class="tag">${isIn ? "ENTRADA" : "SALIDA"}</span>
+          <span class="who">${nombre}<span class="where">${obra}</span></span>
+          <span class="tag${estado.warn ? " warn" : ""}">${estado.tag}</span>
         </div>`;
     }
     return html;
